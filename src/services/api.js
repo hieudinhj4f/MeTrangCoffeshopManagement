@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://metrangcompanybe-xxxx.onrender.com/api',
+  baseURL: 'https://metrangcompanybe.onrender.com',
 });
 
 // Interceptor để tự động gắn Token vào Header
