@@ -16,7 +16,7 @@ const EmployeeManagement = () => {
     const fetchEmployees = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com/apiusers', { withCredentials: true });
+            const response = await axios.get('https://metrangcompanybe.onrender.com/api/users', { withCredentials: true });
             const staffOnly = response.data.filter(u => u.role !== 'CUSTOMER');
             setUsers(staffOnly);
         } catch (error) {
