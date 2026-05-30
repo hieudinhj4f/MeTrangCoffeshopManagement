@@ -26,7 +26,7 @@ const RankManagement = () => {
   const fetchRanks = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:8080/api/ranks');
+      const res = await axios.get('https://metrangcompanybe.onrender.com/api/ranks');
       setRanks(res.data);
     } catch (err) {
       message.error("Không thể kết nối đến máy chủ!");
@@ -44,10 +44,10 @@ const RankManagement = () => {
   const handleSave = async (values) => {
     try {
       if (editingRank) {
-        await axios.put(`http://localhost:8080/api/ranks/${editingRank.id}`, values);
+        await axios.put(`https://metrangcompanybe.onrender.com/api/ranks/${editingRank.id}`, values);
         message.success("Cập nhật hạng thành công!");
       } else {
-        await axios.post('http://localhost:8080/api/ranks', values);
+        await axios.post('https://metrangcompanybe.onrender.com/api/ranks', values);
         message.success("Thêm hạng mới thành công!");
       }
       setIsModalOpen(false);

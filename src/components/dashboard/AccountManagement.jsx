@@ -10,7 +10,7 @@ const AccountManagement = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/api/users', {
+            const response = await axios.get('https://metrangcompanybe.onrender.com/api/users', {
                 withCredentials: true // Quan trọng để khớp với cấu hình CORS mình vừa sửa
             });
             setUsers(response.data);
@@ -29,7 +29,7 @@ const AccountManagement = () => {
     // 2. Hàm vô hiệu hóa tài khoản
     const handleDeactivate = async (id) => {
         try {
-            await axios.patch(`http://localhost:8080/api/users/${id}/deactivate`, {}, { withCredentials: true });
+            await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
             message.success("Đã vô hiệu hóa tài khoản!");
             fetchUsers(); // Tải lại danh sách
         } catch (error) {

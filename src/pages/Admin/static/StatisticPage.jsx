@@ -42,9 +42,9 @@ const StatisticPage = () => {
             try {
                 // ĐANG DÙNG FETCH MẶC ĐỊNH. (Nếu bạn dùng axios thì thay bằng api.get('/api/statistics/finance?...'))
                 const [financeRes, operationRes, inventoryRes] = await Promise.all([
-                    fetch(`http://localhost:8080/api/statistics/finance?startDate=${startDate}&endDate=${endDate}`),
-                    fetch(`http://localhost:8080/api/statistics/operations?startDate=${startDate}&endDate=${endDate}`),
-                    fetch(`http://localhost:8080/api/statistics/inventory`)
+                    fetch(`https://metrangcompanybe.onrender.com/api/statistics/finance?startDate=${startDate}&endDate=${endDate}`),
+                    fetch(`https://metrangcompanybe.onrender.com/api/statistics/operations?startDate=${startDate}&endDate=${endDate}`),
+                    fetch(`https://metrangcompanybe.onrender.com/api/statistics/inventory`)
                 ]);
 
                 if (financeRes.ok) {

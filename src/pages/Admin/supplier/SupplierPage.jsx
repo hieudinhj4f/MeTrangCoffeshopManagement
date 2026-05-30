@@ -15,7 +15,7 @@ const SupplierPage = () => {
     const fetchSuppliers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/api/suppliers', {
+            const response = await axios.get('https://metrangcompanybe.onrender.com/api/suppliers', {
                 withCredentials: true 
             });
             setSuppliers(response.data);
@@ -33,10 +33,10 @@ const SupplierPage = () => {
     const handleSubmit = async (values) => {
         try {
             if (editingSupplier) {
-                await axios.put(`http://localhost:8080/api/suppliers/${editingSupplier.id}`, values, { withCredentials: true });
+                await axios.put(`https://metrangcompanybe.onrender.com/api/suppliers/${editingSupplier.id}`, values, { withCredentials: true });
                 message.success("Cập nhật thành công!");
             } else {
-                await axios.post('http://localhost:8080/api/suppliers', values, { withCredentials: true });
+                await axios.post('https://metrangcompanybe.onrender.com/api/suppliers', values, { withCredentials: true });
                 message.success("Thêm nhà cung cấp thành công!");
             }
             setIsModalOpen(false);

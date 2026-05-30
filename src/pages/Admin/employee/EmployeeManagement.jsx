@@ -16,7 +16,7 @@ const EmployeeManagement = () => {
     const fetchEmployees = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/api/users', { withCredentials: true });
+            const response = await axios.get('https://metrangcompanybe.onrender.com/apiusers', { withCredentials: true });
             const staffOnly = response.data.filter(u => u.role !== 'CUSTOMER');
             setUsers(staffOnly);
         } catch (error) {
@@ -31,10 +31,10 @@ const EmployeeManagement = () => {
     const handleSubmit = async (values) => {
         try {
             if (editingUser) {
-                await axios.put(`http://localhost:8080/api/users/${editingUser.id}`, values, { withCredentials: true });
+                await axios.put(`https://metrangcompanybe.onrender.com/api/users/${editingUser.id}`, values, { withCredentials: true });
                 message.success("Cập nhật thông tin nhân sự thành công!");
             } else {
-                await axios.post('http://localhost:8080/api/users', values, { withCredentials: true });
+                await axios.post('https://metrangcompanybe.onrender.com/api/users', values, { withCredentials: true });
                 message.success("Thêm nhân viên và tạo tài khoản thành công!");
             }
             setIsModalOpen(false);
@@ -47,7 +47,7 @@ const EmployeeManagement = () => {
 
     const handleDeactivate = async (id) => {
         try {
-            await axios.patch(`http://localhost:8080/api/users/${id}/deactivate`, {}, { withCredentials: true });
+            await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
             message.success("Đã khóa tài khoản nhân viên!");
             fetchEmployees();
         } catch (error) {
