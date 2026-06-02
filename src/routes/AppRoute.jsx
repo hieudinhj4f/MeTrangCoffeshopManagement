@@ -29,7 +29,7 @@ const AppRoute = () => {
             </Route>
 
             {/* --- 3. Admin & Staff Routes (Trang quản trị Mê Trang) --- */}
-            <Route element={<RoleGuard allowedRoles={['ADMIN', 'WAREHOUSE_KEEPER', 'DISPATCHER']} />}>
+            <Route element={<RoleGuard allowedRoles={['ADMIN', 'WAREHOUSE_KEEPER', 'DISPATCHER', 'STAFF']} />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
             </Route>
 
