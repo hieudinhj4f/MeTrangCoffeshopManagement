@@ -107,7 +107,6 @@ const StockEntryPage = () => {
         </table>
       </div>
 
-      {/* Footer Phiếu & Buttons (Đã nhét nút Đăng ký vào cạnh Thêm dòng) */}
       <div className="flex justify-between items-center border-t border-slate-100 pt-8">
         <div className="flex gap-4">
             <button onClick={addItem} className="text-slate-400 hover:text-orange-500 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
@@ -129,7 +128,6 @@ const StockEntryPage = () => {
         </div>
       </div>
 
-      {/* Đưa Modal vào trong thẻ div cha cuối cùng để tránh lỗi cha-con */}
       <QuickAddProductModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 

@@ -431,7 +431,12 @@ export default function HomePage() {
       return;
     }
 
-    if (walletBalance !== null && walletBalance < totalAmount) {
+    // Xác định phương thức thanh toán
+    // Nếu có load được số dư ví -> Trả bằng ví. Nếu không -> Trả tiền mặt
+    const currentPaymentMethod = walletBalance !== null ? 'WALLET' : 'CASH';
+
+    // Chỉ chặn lỗi thiếu tiền NẾU khách hàng đang thanh toán bằng Ví
+    if (currentPaymentMethod === 'WALLET' && walletBalance < totalAmount) {
       message.warning('Số dư ví không đủ. Vui lòng nạp thêm tiền.');
       return;
     }
@@ -441,6 +446,7 @@ export default function HomePage() {
       const response = await placeOrder({
         customerId: getCustomerId() || user.id,
         warehouseId: 1,
+        paymentMethod: currentPaymentMethod, // 🔥 ĐÃ BỔ SUNG TRƯỜNG NÀY
         items: cart.map((item) => ({
           productId: item.id,
           quantity: item.qty,
@@ -451,7 +457,7 @@ export default function HomePage() {
       setCart([]);
       localStorage.removeItem(CART_KEY);
       setDrawerOpen(false);
-      fetchWallet();
+      fetchWallet(); // Cập nhật lại số dư ví sau khi mua xong
     } catch (err) {
       const errorMsg = err.response?.data?.reason || 'Lỗi đặt hàng';
       message.error(errorMsg);
