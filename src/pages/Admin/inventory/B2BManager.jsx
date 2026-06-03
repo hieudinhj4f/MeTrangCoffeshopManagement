@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import api from '../../../services/api.js';
 import { message } from 'antd';
 import { Building2, Search, Plus, Edit2, X, Receipt, Phone, MapPin } from 'lucide-react';
 
