@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import WarehousePage from './warehouse/WarehousePage.jsx';
-import StockEntryPage from './inventory/B2BManager.jsx';
+import B2BManager from './inventory/B2BManager.jsx';
 import AccountManagement from './account/AccountManagementPage.jsx';
 import SupplierPage from './supplier/SupplierPage.jsx';
 import RankManagement from './rank/RankManagement.jsx';
@@ -61,7 +61,7 @@ const DashboardPage = () => {
       return <WarehousePage />;
 
     case 'entry':
-        return <B2BManager />;
+        return <B2BManager/>;
 
     case 'suppliers':
       return  <SupplierPage/>;
