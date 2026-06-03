@@ -446,7 +446,7 @@ export default function HomePage() {
       const response = await placeOrder({
         customerId: getCustomerId() || user.id,
         warehouseId: 1,
-        paymentMethod: currentPaymentMethod, // 🔥 ĐÃ BỔ SUNG TRƯỜNG NÀY
+        paymentMethod: currentPaymentMethod, 
         items: cart.map((item) => ({
           productId: item.id,
           quantity: item.qty,
@@ -457,7 +457,7 @@ export default function HomePage() {
       setCart([]);
       localStorage.removeItem(CART_KEY);
       setDrawerOpen(false);
-      fetchWallet(); // Cập nhật lại số dư ví sau khi mua xong
+      fetchWallet(); 
     } catch (err) {
       const errorMsg = err.response?.data?.reason || 'Lỗi đặt hàng';
       message.error(errorMsg);
