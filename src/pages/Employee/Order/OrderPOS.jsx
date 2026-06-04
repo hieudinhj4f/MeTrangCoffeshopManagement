@@ -1,26 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Plus, Minus, Trash2, User, Building2, CreditCard, Wallet, FileText } from 'lucide-react';
+import { Search, ShoppingCart, Plus, Minus, Trash2, User, Building2, CreditCard, Wallet, FileText, Lock, X } from 'lucide-react';
 import { message } from 'antd';
-// import api from '../../services/api'; // Comment lại tạm thời nếu chưa nối API
+import api from '../../../services/api'; // Import đúng instance Axios của dự án
 
 export default function OrderPOS() {
-  // 1. STATE QUẢN LÝ KHÁCH HÀNG
+  // 1. STATE QUẢN LÝ KHÁCH HÀNG & SẢN PHẨM
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null); 
-  // null = Khách vãng lai (Retail). Nếu có data = Doanh nghiệp/Công nhân
+  const [menuItems, setMenuItems] = useState([]);
+  const [loadingMenu, setLoadingMenu] = useState(false);
 
-  // 2. STATE GIỎ HÀNG & THANH TOÁN
+  // 2. STATE GIỎ HÀNG, THANH TOÁN & BẢO MẬT
   const [cart, setCart] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinCode, setPinCode] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // MOCK DATA (Thay bằng gọi API lấy danh sách món và khách hàng thực tế)
-  const menuItems = [
-    { id: 1, name: 'Cà phê đen đá', basePrice: 25000, img: 'https://via.placeholder.com/150' },
-    { id: 2, name: 'Bạc xỉu', basePrice: 30000, img: 'https://via.placeholder.com/150' },
-    { id: 3, name: 'Cà phê sữa đá', basePrice: 28000, img: 'https://via.placeholder.com/150' },
-  ];
+  // 3. FETCH DANH SÁCH MÓN TỪ BACKEND
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoadingMenu(true);
+      try {
+        const res = await api.get('/products');
+        setMenuItems(res.data);
+      } catch (error) {
+        message.error('Không thể tải danh sách sản phẩm!');
+      } finally {
+        setLoadingMenu(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-  // Logic Đa kênh: Tính giá tự động dựa trên tệp khách hàng
+  // 4. LOGIC TÍNH GIÁ ĐA KÊNH
   const getDisplayPrice = (basePrice) => {
     if (selectedCustomer?.customerType === 'ENTERPRISE') {
       return basePrice * 0.85; // Chiết khấu 15% cho B2B
@@ -40,43 +53,91 @@ export default function OrderPOS() {
     setCart(prev => prev.map(item => item.id === id ? { ...item, qty: item.qty + delta } : item).filter(item => item.qty > 0));
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + (getDisplayPrice(item.basePrice) * item.qty), 0);
+  const totalAmount = cart.reduce((sum, item) => sum + (getDisplayPrice(item.price || 0) * item.qty), 0);
 
-  // Giả lập tìm kiếm khách hàng
-  const handleSearchCustomer = (e) => {
+  // 5. TÌM KIẾM KHÁCH HÀNG (API THẬT)
+  const handleSearchCustomer = async (e) => {
     if (e.key === 'Enter') {
-      if (searchQuery === '010205') {
-        setSelectedCustomer({ id: 'uuid-1', name: 'Panasonic Bắc Thăng Long', customerType: 'ENTERPRISE', creditLimit: 50000000, currentDebt: 15000000 });
-        setPaymentMethod('DEBT'); // Tự động gợi ý công nợ
-        message.success('Đã áp dụng chính sách giá Sỉ cho Doanh nghiệp!');
-      } else {
+      if (!searchQuery.trim()) {
+        setSelectedCustomer(null);
+        setPaymentMethod('CASH');
+        return;
+      }
+      try {
+        const res = await api.get(`/customers/search?keyword=${searchQuery}`);
+        const customerData = res.data;
+        
+        setSelectedCustomer(customerData);
+        
+        // Tự động phân luồng thanh toán
+        if (customerData.customerType === 'ENTERPRISE') {
+          setPaymentMethod('DEBT');
+          message.success(`Đã áp dụng giá sỉ cho: ${customerData.companyName || customerData.fullName}`);
+        } else if (customerData.customerType === 'WORKER') {
+          setPaymentMethod('WALLET');
+          message.info(`Khách hàng Công nhân - Ưu tiên dùng Ví nội bộ`);
+        } else {
+          setPaymentMethod('CASH');
+        }
+      } catch (error) {
+        message.error('Không tìm thấy khách hàng này!');
         setSelectedCustomer(null);
         setPaymentMethod('CASH');
       }
     }
   };
 
-  const handleCheckout = () => {
+  // 6. XỬ LÝ CHỐT ĐƠN
+  const handleCheckoutClick = () => {
     if (cart.length === 0) return message.warning('Giỏ hàng trống!');
     if (paymentMethod === 'DEBT' && selectedCustomer?.customerType !== 'ENTERPRISE') {
       return message.error('Chỉ doanh nghiệp đối tác mới được mua nợ!');
     }
     
-    // GỌI API XUỐNG BACKEND Ở ĐÂY
-    const payload = {
-      customerId: selectedCustomer?.id || null,
-      warehouseId: 1,
-      paymentMethod: paymentMethod,
-      items: cart.map(i => ({ productId: i.id, quantity: i.qty }))
-    };
-    
-    console.log("Bắn API:", payload);
-    message.success('Chốt đơn thành công!');
-    setCart([]);
+    // Yêu cầu nhập PIN nếu trả bằng Ví nội bộ
+    if (paymentMethod === 'WALLET') {
+      if (!selectedCustomer) return message.error('Vui lòng định danh khách hàng trước khi dùng Ví!');
+      setShowPinModal(true);
+      return;
+    }
+
+    // Nếu là Tiền mặt hoặc Công nợ -> Bắn API luôn
+    executeOrder();
+  };
+
+  // 7. GỌI API TẠO ĐƠN
+  const executeOrder = async (pin = null) => {
+    setIsProcessing(true);
+    try {
+      const payload = {
+        customerId: selectedCustomer?.id || null,
+        warehouseId: 1,
+        paymentMethod: paymentMethod,
+        pinCode: pin, // Truyền mã PIN xuống Backend để verify (nếu có)
+        items: cart.map(i => ({ productId: i.id, quantity: i.qty }))
+      };
+      
+      await api.post('/orders/place', payload); // Điều chỉnh endpoint đúng với backend của bạn
+      
+      message.success('Chốt đơn thành công!');
+      setCart([]);
+      setShowPinModal(false);
+      setPinCode('');
+      // Reset khách vãng lai sau khi xong đơn
+      if(paymentMethod !== 'DEBT') {
+        setSelectedCustomer(null);
+        setSearchQuery('');
+        setPaymentMethod('CASH');
+      }
+    } catch (error) {
+      message.error(error.response?.data?.reason || 'Có lỗi xảy ra khi tạo đơn!');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans relative">
       
       {/* TRÁI: MENU & TÌM KIẾM SẢN PHẨM */}
       <div className="flex-1 flex flex-col p-6">
@@ -92,20 +153,24 @@ export default function OrderPOS() {
         </div>
 
         <div className="grid grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2 pb-20">
-          {menuItems.map(item => (
-            <div key={item.id} onClick={() => addToCart(item)} className="bg-white p-4 rounded-[24px] cursor-pointer hover:shadow-lg transition-all border border-slate-100 group">
-              <div className="h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden">
-                <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+          {loadingMenu ? (
+            <div className="col-span-full text-center text-slate-400 font-bold uppercase tracking-widest py-10">Đang tải thực đơn...</div>
+          ) : (
+            menuItems.map(item => (
+              <div key={item.id} onClick={() => addToCart(item)} className="bg-white p-4 rounded-[24px] cursor-pointer hover:shadow-lg transition-all border border-slate-100 group">
+                <div className="h-32 bg-slate-100 rounded-xl mb-4 overflow-hidden relative">
+                  <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                </div>
+                <h3 className="font-bold text-slate-800 text-sm mb-1">{item.name}</h3>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="font-black text-orange-500">{getDisplayPrice(item.price || 0).toLocaleString()}đ</span>
+                  {selectedCustomer?.customerType === 'ENTERPRISE' && (
+                    <span className="text-[10px] line-through text-slate-400">{(item.price || 0).toLocaleString()}đ</span>
+                  )}
+                </div>
               </div>
-              <h3 className="font-bold text-slate-800 text-sm mb-1">{item.name}</h3>
-              <div className="flex justify-between items-center mt-2">
-                <span className="font-black text-orange-500">{getDisplayPrice(item.basePrice).toLocaleString()}đ</span>
-                {selectedCustomer?.customerType === 'ENTERPRISE' && (
-                  <span className="text-[10px] line-through text-slate-400">{item.basePrice.toLocaleString()}đ</span>
-                )}
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
@@ -119,24 +184,32 @@ export default function OrderPOS() {
             {selectedCustomer?.customerType === 'ENTERPRISE' ? <Building2 size={16} className="text-orange-500" /> : <User size={16} className="text-slate-400" />}
             <input 
               type="text" 
-              placeholder="Nhập SĐT hoặc Mã số thuế (Thử nhập 010205 rổi Enter)" 
+              placeholder="Nhập SĐT / Mã số thuế rổi Enter" 
               className="w-full ml-3 outline-none text-xs font-bold text-slate-700 placeholder-slate-300"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearchCustomer}
             />
             {selectedCustomer && (
-              <button onClick={() => { setSelectedCustomer(null); setPaymentMethod('CASH'); }} className="ml-2 text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
+              <button onClick={() => { setSelectedCustomer(null); setSearchQuery(''); setPaymentMethod('CASH'); }} className="ml-2 text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
             )}
           </div>
           
-          {/* Box thông tin B2B hiển thị nếu chọn doanh nghiệp */}
-          {selectedCustomer && selectedCustomer.customerType === 'ENTERPRISE' && (
-            <div className="mt-3 p-3 bg-orange-50 border border-orange-100 rounded-xl">
-              <div className="font-bold text-orange-800 text-xs mb-1">{selectedCustomer.name}</div>
-              <div className="flex justify-between text-[10px] font-semibold text-orange-600/80">
-                <span>Nợ hiện tại: {selectedCustomer.currentDebt.toLocaleString()}đ</span>
-                <span>Hạn mức: {selectedCustomer.creditLimit.toLocaleString()}đ</span>
+          {/* Box thông tin hiển thị nếu có khách hàng */}
+          {selectedCustomer && (
+            <div className={`mt-3 p-3 border rounded-xl ${selectedCustomer.customerType === 'ENTERPRISE' ? 'bg-orange-50 border-orange-100' : 'bg-blue-50 border-blue-100'}`}>
+              <div className={`font-bold text-xs mb-1 ${selectedCustomer.customerType === 'ENTERPRISE' ? 'text-orange-800' : 'text-blue-800'}`}>
+                {selectedCustomer.companyName || selectedCustomer.fullName}
+              </div>
+              <div className={`flex justify-between text-[10px] font-semibold ${selectedCustomer.customerType === 'ENTERPRISE' ? 'text-orange-600/80' : 'text-blue-600/80'}`}>
+                {selectedCustomer.customerType === 'ENTERPRISE' ? (
+                  <>
+                    <span>Nợ hiện tại: {(selectedCustomer.currentDebt || 0).toLocaleString()}đ</span>
+                    <span>Hạn mức: {(selectedCustomer.creditLimit || 0).toLocaleString()}đ</span>
+                  </>
+                ) : (
+                  <span>Số dư ví: {(selectedCustomer.walletBalance || 0).toLocaleString()}đ</span>
+                )}
               </div>
             </div>
           )}
@@ -153,10 +226,10 @@ export default function OrderPOS() {
             <div className="space-y-4">
               {cart.map(item => (
                 <div key={item.id} className="flex gap-4 items-center">
-                  <img src={item.img} className="w-12 h-12 rounded-lg object-cover bg-slate-100" />
+                  <img src={item.imageUrl || 'https://via.placeholder.com/150'} className="w-12 h-12 rounded-lg object-cover bg-slate-100" alt={item.name}/>
                   <div className="flex-1">
                     <div className="font-bold text-slate-800 text-xs">{item.name}</div>
-                    <div className="text-orange-500 font-black text-xs mt-1">{getDisplayPrice(item.basePrice).toLocaleString()}đ</div>
+                    <div className="text-orange-500 font-black text-xs mt-1">{getDisplayPrice(item.price || 0).toLocaleString()}đ</div>
                   </div>
                   <div className="flex items-center gap-3 bg-slate-50 rounded-lg p-1 border border-slate-100">
                     <button onClick={() => updateQty(item.id, -1)} className="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-slate-800"><Minus size={12} /></button>
@@ -171,7 +244,6 @@ export default function OrderPOS() {
 
         {/* Tổng tiền & Chốt đơn */}
         <div className="p-6 bg-white border-t border-slate-100 shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
-          
           <div className="grid grid-cols-3 gap-2 mb-6">
             <button onClick={() => setPaymentMethod('CASH')} className={`py-3 flex flex-col items-center justify-center gap-1 rounded-xl border-2 transition-all ${paymentMethod === 'CASH' ? 'border-[#111827] bg-[#111827] text-white' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}>
               <CreditCard size={16} />
@@ -196,12 +268,46 @@ export default function OrderPOS() {
             <span className="text-3xl font-black text-orange-500">{totalAmount.toLocaleString()}đ</span>
           </div>
           
-          <button onClick={handleCheckout} className="w-full bg-[#111827] hover:bg-orange-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2">
-            <ShoppingCart size={16} /> Xác Nhận Lên Đơn
+          <button onClick={handleCheckoutClick} disabled={isProcessing} className="w-full bg-[#111827] hover:bg-orange-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2">
+            <ShoppingCart size={16} /> {isProcessing ? 'Đang xử lý...' : 'Xác Nhận Lên Đơn'}
           </button>
         </div>
-
       </div>
+
+      {/* MODAL BẢO MẬT MÃ PIN (WALLET PAYMENT) */}
+      {showPinModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-[360px] rounded-[32px] shadow-2xl overflow-hidden border border-slate-100 p-8 text-center relative">
+            <button onClick={() => setShowPinModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-red-500"><X size={20} /></button>
+            
+            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">
+              <Lock size={28} />
+            </div>
+            
+            <h3 className="text-lg font-black text-slate-800 uppercase tracking-tighter mb-1">Xác Thực Ví Khách Hàng</h3>
+            <p className="text-xs font-bold text-slate-400 mb-6">Vui lòng yêu cầu khách hàng {selectedCustomer?.fullName} nhập mã PIN để thanh toán.</p>
+            
+            <input 
+              type="password" 
+              maxLength="4"
+              value={pinCode}
+              onChange={(e) => setPinCode(e.target.value.replace(/\D/g, ''))} // Chỉ cho nhập số
+              className="w-full text-center tracking-[1em] text-3xl font-black text-slate-800 bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 mb-6 outline-none focus:border-blue-500 transition-colors"
+              placeholder="••••"
+              autoFocus
+            />
+            
+            <button 
+              onClick={() => executeOrder(pinCode)} 
+              disabled={pinCode.length < 4 || isProcessing}
+              className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:hover:bg-blue-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[2px] transition-all"
+            >
+              Xác Nhận Trừ Tiền
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
