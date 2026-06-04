@@ -31,6 +31,7 @@ const DashboardPage = () => {
 
 // Các module khác có thể thêm vào đây...
     {id:"orders", label: 'Quản lý đơn hàng', icon: 'fa-receipt', group: 'Đơn hàng'},
+     {id:"POS", label: 'Bán hàng POS', icon: 'fa-cash-register', group: ' Đơn hàng'},
     {id:"reports", label: 'Báo cáo', icon: 'fa-chart-line', group: 'Phân tích'},
 ];
 
@@ -79,7 +80,7 @@ const DashboardPage = () => {
     case 'reports':
       return <StatisticsPage />;
 
-    case 'orders':
+    case 'POS':
       return <OrderPOS />;
 
     default:
