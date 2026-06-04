@@ -8,6 +8,7 @@ import EmployeeManagement from './employee/EmployeeManagement.jsx';
 import ProductManagementPage from './product/ProductManagementPage.jsx';
 import OrderManagement from '../Employee/Order/OrderManagement.jsx';
 import StatisticsPage from '../Admin/static/StatisticPage.jsx';
+import OrderPOS from '../Employee/Order/OrderPOS.jsx';
 import { Orbit } from 'lucide-react';
 
 const DashboardPage = () => {
@@ -77,6 +78,9 @@ const DashboardPage = () => {
       
     case 'reports':
       return <StatisticsPage />;
+
+    case 'orders':
+      return <OrderPOS />;
 
     default:
       return (
