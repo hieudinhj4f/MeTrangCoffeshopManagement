@@ -87,7 +87,7 @@ const ProductManagementPage = () => {
     const handleSave = async (values) => {
         setLoading(true);
         try {
-            await axios.post('https://metrangcompanybe.onrender.com/api/products/', values, { withCredentials: true });
+            await axios.post('https://metrangcompanybe.onrender.com/api/products/quick-add', values, { withCredentials: true });
             message.success("Cấu hình sản phẩm thành công!");
             setIsModalOpen(false);
             fetchProducts();

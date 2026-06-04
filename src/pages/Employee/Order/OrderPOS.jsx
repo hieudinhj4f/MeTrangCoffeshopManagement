@@ -4,13 +4,13 @@ import { message } from 'antd';
 import api from '../../../services/api'; // Import đúng instance Axios của dự án
 
 export default function OrderPOS() {
-  // 1. STATE QUẢN LÝ KHÁCH HÀNG & SẢN PHẨM
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null); 
   const [menuItems, setMenuItems] = useState([]);
   const [loadingMenu, setLoadingMenu] = useState(false);
 
-  // 2. STATE GIỎ HÀNG, THANH TOÁN & BẢO MẬT
+
   const [cart, setCart] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [showPinModal, setShowPinModal] = useState(false);
@@ -94,18 +94,17 @@ export default function OrderPOS() {
       return message.error('Chỉ doanh nghiệp đối tác mới được mua nợ!');
     }
     
-    // Yêu cầu nhập PIN nếu trả bằng Ví nội bộ
     if (paymentMethod === 'WALLET') {
       if (!selectedCustomer) return message.error('Vui lòng định danh khách hàng trước khi dùng Ví!');
       setShowPinModal(true);
       return;
     }
 
-    // Nếu là Tiền mặt hoặc Công nợ -> Bắn API luôn
+
     executeOrder();
   };
 
-  // 7. GỌI API TẠO ĐƠN
+
   const executeOrder = async (pin = null) => {
     setIsProcessing(true);
     try {
