@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
-// 💡 Đã import thêm Upload từ antd
 import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Select, InputNumber, Avatar, Upload } from 'antd';
-// 💡 Đã import thêm UploadCloud và Loader2 từ lucide-react để làm icon cho nút bấm
-import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filter, UploadCloud, Loader2 } from 'lucide-react';
+// 💡 Import thêm icon Tag (đại diện cho cấu hình giá)
+import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filter, UploadCloud, Loader2, Tag as TagIcon } from 'lucide-react';
 import axios from 'axios';
+
+// 💡 IMPORT COMPONENT MODAL CẤU HÌNH GIÁ MÀ CHÚNG TA VỪA TẠO
+import PriceConfigModal from './PriceConfigModal'; // Nhớ điều chỉnh lại đường dẫn cho đúng với project của bạn
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -17,9 +19,11 @@ const ProductManagementPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [form] = Form.useForm();
 
-    // 💡 Thêm 2 state để quản lý quá trình upload ảnh và preview trong Modal
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
+
+    // 💡 Thêm State để quản lý việc đóng/mở Modal Cấu hình giá
+    const [priceConfigProduct, setPriceConfigProduct] = useState(null);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -56,22 +60,21 @@ const ProductManagementPage = () => {
         return matchSearch && matchCategory;
     });
 
-    // 💡 HÀM XỬ LÝ UPLOAD ẢNH LÊN CLOUDINARY
     const handleCloudinaryUpload = async ({ file, onSuccess, onError }) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('upload_preset', 'hieudinh'); // Thay tên Preset của bạn vào đây
+        formData.append('upload_preset', 'hieudinh');
 
         setUploading(true);
         try {
             const response = await axios.post(
-                'https://api.cloudinary.com/v1_1/dmbhwdjua/image/upload', // Thay Cloud Name của bạn vào đây
+                'https://api.cloudinary.com/v1_1/dmbhwdjua/image/upload', 
                 formData
             );
             
             const secureUrl = response.data.secure_url;
-            setImageUrl(secureUrl); // Cập nhật ảnh Preview
-            form.setFieldsValue({ imageUrl: secureUrl }); // Gán link ngầm vào Form để submit
+            setImageUrl(secureUrl); 
+            form.setFieldsValue({ imageUrl: secureUrl }); 
             
             onSuccess(response.data);
             message.success('Tải ảnh lên mây Cloudinary thành công!');
@@ -138,13 +141,21 @@ const ProductManagementPage = () => {
             key: 'action',
             render: (r) => (
                 <Space>
-                    {/* 💡 Sửa: Khi bấm Edit, tự động lấy link ảnh cũ gán vào ô Preview */}
+                    {/* 💡 THÊM NÚT CẤU HÌNH GIÁ VÀO ĐÂY */}
+                    <Button 
+                        type="text" 
+                        title="Cấu hình giá/Sự kiện"
+                        icon={<TagIcon size={18} color="#3b82f6" />} 
+                        onClick={() => setPriceConfigProduct(r)} 
+                    />
+
                     <Button type="text" icon={<Edit3 size={18} color="#d4af37" />} onClick={() => { 
                         setEditingProduct(r); 
                         form.setFieldsValue(r); 
                         setImageUrl(r.imageUrl || ''); 
                         setIsModalOpen(true); 
                     }} />
+                    
                     <Button type="text" danger icon={<Trash2 size={18} />} />
                 </Space>
             )
@@ -158,7 +169,6 @@ const ProductManagementPage = () => {
                     <Title level={2} style={{ color: '#fff', margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>DANH MỤC HÀNG HÓA</Title>
                     <Text style={{ color: '#d4af37', fontWeight: 500 }}>B2B & RETAIL MANAGEMENT</Text>
                 </div>
-                {/* 💡 Sửa: Khi bấm Thêm mới, tự động xóa rỗng ô Preview ảnh */}
                 <Button type="primary" icon={<Plus size={20} />} onClick={() => { 
                     setEditingProduct(null); 
                     form.resetFields(); 
@@ -210,7 +220,6 @@ const ProductManagementPage = () => {
                         <Col span={8}><Form.Item name="sku" label="Mã SKU" rules={[{ required: true }]}><Input/></Form.Item></Col>
                     </Row>
                     
-                    {/* 💡 THAY THẾ TOÀN BỘ Ô INPUT ẢNH CŨ THÀNH COMPONENT UPLOAD */}
                     <Form.Item label="Hình ảnh sản phẩm">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', border: '1px dashed #e2e8f0', padding: '16px', borderRadius: '12px', background: '#f8fafc' }}>
                             <Upload 
@@ -228,7 +237,6 @@ const ProductManagementPage = () => {
                                 </Button>
                             </Upload>
                             
-                            {/* Hiển thị ảnh xem trước nếu đã upload hoặc đang sửa */}
                             {imageUrl && (
                                 <div style={{ width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0', flexShrink: 0, background: '#fff' }}>
                                     <img src={imageUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -237,7 +245,6 @@ const ProductManagementPage = () => {
                         </div>
                     </Form.Item>
                     
-                    {/* 💡 Trường input ẩn để lưu và gửi URL online này về Backend Spring Boot */}
                     <Form.Item name="imageUrl" hidden><Input /></Form.Item>
 
                     <Row gutter={16}>
@@ -253,6 +260,14 @@ const ProductManagementPage = () => {
                     </Row>
                 </Form>
             </Modal>
+
+            {/* 💡 NHÚNG MODAL CẤU HÌNH GIÁ VÀO ĐÂY */}
+            <PriceConfigModal 
+                isOpen={!!priceConfigProduct} 
+                onClose={() => setPriceConfigProduct(null)} 
+                product={priceConfigProduct} 
+                onPriceAdded={fetchProducts} 
+            />
         </div>
     );
 };

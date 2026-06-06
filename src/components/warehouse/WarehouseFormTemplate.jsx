@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Input, Select, Button, InputNumber, DatePicker, message, Space } from 'antd';
 import { PlusOutlined, DeleteOutlined, PrinterOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import api from '../services/api';
+import api from '../../services/api';
 
 // Hàm helper chuyển đổi số tiền thành chữ (Phục vụ dòng "Số tiền viết bằng chữ" cuối phiếu)
 const readVndMoney = (amount) => {
