@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Select, InputNumber, Avatar, Upload } from 'antd';
-// 💡 Import thêm icon Tag (đại diện cho cấu hình giá)
 import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filter, UploadCloud, Loader2, Tag as TagIcon } from 'lucide-react';
 import axios from 'axios';
 
-// 💡 IMPORT COMPONENT MODAL CẤU HÌNH GIÁ MÀ CHÚNG TA VỪA TẠO
+
 import PriceConfigModal from '../../../components/warehouse/PriceConfigModal'; 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -20,8 +19,6 @@ const ProductManagementPage = () => {
 
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
-
-    // 💡 Thêm State để quản lý việc đóng/mở Modal Cấu hình giá
     const [priceConfigProduct, setPriceConfigProduct] = useState(null);
 
     const fetchProducts = async () => {
@@ -128,9 +125,14 @@ const ProductManagementPage = () => {
             key: 'priceInfo',
             render: (r) => (
                 <div>
-                    <Text strong>{r.price?.toLocaleString()}đ</Text>
-                    {r.discountPrice && (
-                        <div style={{ fontSize: '12px', color: '#dc2626' }}><Percent size={12} /> -{r.discountPrice?.toLocaleString()}đ</div>
+                    {/* Đổi r.price thành r.basePrice */}
+                    <Text strong>{r.basePrice?.toLocaleString()}đ</Text> 
+                    
+                    {/* Đổi r.discountPrice thành r.salePrice */}
+                    {r.salePrice && (
+                        <div style={{ fontSize: '12px', color: '#dc2626' }}>
+                            <Percent size={12} /> -{r.salePrice?.toLocaleString()}đ
+                        </div>
                     )}
                 </div>
             )
