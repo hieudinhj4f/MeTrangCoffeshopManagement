@@ -5,8 +5,7 @@ import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filte
 import axios from 'axios';
 
 // 💡 IMPORT COMPONENT MODAL CẤU HÌNH GIÁ MÀ CHÚNG TA VỪA TẠO
-import PriceConfigModal from './PriceConfigModal'; // Nhớ điều chỉnh lại đường dẫn cho đúng với project của bạn
-
+import PriceConfigModal from '../../../components/warehouse/PriceConfigModal'; 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
