@@ -249,8 +249,8 @@ const ProductManagementPage = () => {
                     <Form.Item name="imageUrl" hidden><Input /></Form.Item>
 
                     <Row gutter={16}>
-                        <Col span={8}><Form.Item name="price" label="Giá bán"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
-                        <Col span={8}><Form.Item name="discountPrice" label="Giá ưu đãi"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
+                        <Col span={8}><Form.Item name="base_price" label="Giá bán"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
+                        <Col span={8}><Form.Item name="sale_price" label="Giá ưu đãi"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
                         <Col span={8}>
                             <Form.Item name="categoryId" label="Danh mục" rules={[{ required: true }]}>
                                 <Select>
@@ -258,7 +258,7 @@ const ProductManagementPage = () => {
                                 </Select>
                             </Form.Item>
                         </Col>
-                    </Row>
+                    </Row> 
                 </Form>
             </Modal>
 

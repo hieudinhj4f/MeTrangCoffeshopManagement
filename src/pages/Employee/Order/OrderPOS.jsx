@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Plus, Minus, Trash2, User, Building2, CreditCard, Wallet, FileText, Lock, X } from 'lucide-react';
 import { message } from 'antd';
-import api from '../../../services/api'; // Import đúng instance Axios của dự án
+import api from '../../../services/api'; 
 
 export default function OrderPOS() {
 
@@ -17,7 +17,7 @@ export default function OrderPOS() {
   const [pinCode, setPinCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // 3. FETCH DANH SÁCH MÓN TỪ BACKEND
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoadingMenu(true);
@@ -112,7 +112,7 @@ export default function OrderPOS() {
         customerId: selectedCustomer?.id || null,
         warehouseId: 1,
         paymentMethod: paymentMethod,
-        pinCode: pin, // Truyền mã PIN xuống Backend để verify (nếu có)
+        pinCode: pin, 
         items: cart.map(i => ({ productId: i.id, quantity: i.qty }))
       };
       
