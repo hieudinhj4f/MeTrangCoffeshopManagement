@@ -10,13 +10,11 @@ export default function OrderPOS() {
   const [menuItems, setMenuItems] = useState([]);
   const [loadingMenu, setLoadingMenu] = useState(false);
 
-
   const [cart, setCart] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [showPinModal, setShowPinModal] = useState(false);
   const [pinCode, setPinCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,12 +31,17 @@ export default function OrderPOS() {
     fetchProducts();
   }, []);
 
-  // 4. LOGIC TÍNH GIÁ ĐA KÊNH
-  const getDisplayPrice = (basePrice) => {
+  // =========================================================================
+  // LOGIC TÍNH GIÁ ĐA KÊNH & SỰ KIỆN (Đã fix sử dụng basePrice & salePrice)
+  // =========================================================================
+  const getDisplayPrice = (item) => {
+    // Ưu tiên giá sự kiện (salePrice), nếu không có thì lấy giá gốc (basePrice)
+    const currentPrice = item.salePrice > 0 ? item.salePrice : (item.basePrice || 0);
+    
     if (selectedCustomer?.customerType === 'ENTERPRISE') {
-      return basePrice * 0.85; // Chiết khấu 15% cho B2B
+      return currentPrice * 0.85; // Chiết khấu 15% cho Doanh nghiệp
     }
-    return basePrice;
+    return currentPrice;
   };
 
   const addToCart = (product) => {
@@ -53,9 +56,9 @@ export default function OrderPOS() {
     setCart(prev => prev.map(item => item.id === id ? { ...item, qty: item.qty + delta } : item).filter(item => item.qty > 0));
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + (getDisplayPrice(item.price || 0) * item.qty), 0);
+  // Tính tổng tiền giỏ hàng dùng hàm getDisplayPrice đã được fix
+  const totalAmount = cart.reduce((sum, item) => sum + (getDisplayPrice(item) * item.qty), 0);
 
-  // 5. TÌM KIẾM KHÁCH HÀNG (API THẬT)
   const handleSearchCustomer = async (e) => {
     if (e.key === 'Enter') {
       if (!searchQuery.trim()) {
@@ -69,7 +72,6 @@ export default function OrderPOS() {
         
         setSelectedCustomer(customerData);
         
-        // Tự động phân luồng thanh toán
         if (customerData.customerType === 'ENTERPRISE') {
           setPaymentMethod('DEBT');
           message.success(`Đã áp dụng giá sỉ cho: ${customerData.companyName || customerData.fullName}`);
@@ -87,7 +89,6 @@ export default function OrderPOS() {
     }
   };
 
-  // 6. XỬ LÝ CHỐT ĐƠN
   const handleCheckoutClick = () => {
     if (cart.length === 0) return message.warning('Giỏ hàng trống!');
     if (paymentMethod === 'DEBT' && selectedCustomer?.customerType !== 'ENTERPRISE') {
@@ -100,10 +101,8 @@ export default function OrderPOS() {
       return;
     }
 
-
     executeOrder();
   };
-
 
   const executeOrder = async (pin = null) => {
     setIsProcessing(true);
@@ -116,13 +115,13 @@ export default function OrderPOS() {
         items: cart.map(i => ({ productId: i.id, quantity: i.qty }))
       };
       
-      await api.post('/orders/place', payload); // Điều chỉnh endpoint đúng với backend của bạn
+      await api.post('/orders/place', payload); 
       
       message.success('Chốt đơn thành công!');
       setCart([]);
       setShowPinModal(false);
       setPinCode('');
-      // Reset khách vãng lai sau khi xong đơn
+      
       if(paymentMethod !== 'DEBT') {
         setSelectedCustomer(null);
         setSearchQuery('');
@@ -162,10 +161,15 @@ export default function OrderPOS() {
                 </div>
                 <h3 className="font-bold text-slate-800 text-sm mb-1">{item.name}</h3>
                 <div className="flex justify-between items-center mt-2">
-                  <span className="font-black text-orange-500">{getDisplayPrice(item.price || 0).toLocaleString()}đ</span>
+                  
+                  {/* HIỂN THỊ GIÁ TRÊN THẺ MÓN */}
+                  <span className="font-black text-orange-500">{getDisplayPrice(item).toLocaleString()}đ</span>
                   {selectedCustomer?.customerType === 'ENTERPRISE' && (
-                    <span className="text-[10px] line-through text-slate-400">{(item.price || 0).toLocaleString()}đ</span>
+                    <span className="text-[10px] line-through text-slate-400">
+                      {(item.salePrice > 0 ? item.salePrice : (item.basePrice || 0)).toLocaleString()}đ
+                    </span>
                   )}
+
                 </div>
               </div>
             ))
@@ -228,7 +232,10 @@ export default function OrderPOS() {
                   <img src={item.imageUrl || 'https://via.placeholder.com/150'} className="w-12 h-12 rounded-lg object-cover bg-slate-100" alt={item.name}/>
                   <div className="flex-1">
                     <div className="font-bold text-slate-800 text-xs">{item.name}</div>
-                    <div className="text-orange-500 font-black text-xs mt-1">{getDisplayPrice(item.price || 0).toLocaleString()}đ</div>
+                    
+                    {/* HIỂN THỊ GIÁ TRONG GIỎ HÀNG */}
+                    <div className="text-orange-500 font-black text-xs mt-1">{getDisplayPrice(item).toLocaleString()}đ</div>
+                    
                   </div>
                   <div className="flex items-center gap-3 bg-slate-50 rounded-lg p-1 border border-slate-100">
                     <button onClick={() => updateQty(item.id, -1)} className="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-slate-800"><Minus size={12} /></button>
