@@ -53,11 +53,16 @@ const AccountManagement = () => {
             title: 'Vai trò',
             dataIndex: 'role',
             key: 'role',
-            render: (role) => (
-                <Tag color={role === 'ADMIN' ? 'volcano' : 'green'}>
-                    {role ? role.toUpperCase() : 'N/A'}
-                </Tag>
-            ),
+            render: (role) => {
+                let color = 'green';
+                if (role === 'ADMIN') color = 'volcano';
+                if (role === 'ENTERPRISE') color = 'geekblue';
+                return (
+                    <Tag color={color}>
+                        {role ? role.toUpperCase() : 'N/A'}
+                    </Tag>
+                );
+            },
         },
         {
             title: 'Trạng thái',

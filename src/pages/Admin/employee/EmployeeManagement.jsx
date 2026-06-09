@@ -86,11 +86,16 @@ const EmployeeManagement = () => {
             title: 'VAI TRÒ',
             dataIndex: 'role',
             key: 'role',
-            render: (role) => (
-                <Tag color={role === 'ADMIN' ? '#e8631a' : '#0a1628'} style={{ fontWeight: 600, border: 'none' }}>
-                    {role ? role.toUpperCase() : 'N/A'}
-                </Tag>
-            ),
+            render: (role) => {
+                let color = '#0a1628';
+                if (role === 'ADMIN') color = '#e8631a';
+                if (role === 'ENTERPRISE') color = '#10b981';
+                return (
+                    <Tag color={color} style={{ fontWeight: 600, border: 'none' }}>
+                        {role ? role.toUpperCase() : 'N/A'}
+                    </Tag>
+                );
+            },
         },
         {
             title: 'TRẠNG THÁI',
