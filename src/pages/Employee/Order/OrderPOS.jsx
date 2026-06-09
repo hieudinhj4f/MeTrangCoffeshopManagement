@@ -31,9 +31,7 @@ export default function OrderPOS() {
     fetchProducts();
   }, []);
 
-  // =========================================================================
-  // LOGIC TÍNH GIÁ ĐA KÊNH & SỰ KIỆN (Đã fix sử dụng basePrice & salePrice)
-  // =========================================================================
+
   const getDisplayPrice = (item) => {
     // Ưu tiên giá sự kiện (salePrice), nếu không có thì lấy giá gốc (basePrice)
     const currentPrice = item.salePrice > 0 ? item.salePrice : (item.basePrice || 0);
