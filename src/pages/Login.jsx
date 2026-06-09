@@ -21,6 +21,8 @@ const Login = () => {
 
       if (response.data.role === 'CUSTOMER') {
         navigate('/shop');
+      } else if (response.data.role === 'ENTERPRISE') {
+        navigate('/enterprise/dashboard');
       } else {
         navigate('/dashboard');
       }
