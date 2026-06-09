@@ -10,7 +10,7 @@ import HomePage from '../pages/Client/HomePage';
 // ── 1. IMPORT CHÍNH XÁC ĐƯỜNG DẪN ĐẾN CÁC THƯ MỤC CON MỚI CỦA HIẾU ──
 import ProfilePage from '../pages/Client/profile/ProfilePage';
 import RankDisplay from '../pages/Client/rank/RankDisplay';
-import EnterpriseTopUp from '../pages/Enterprise/EnterpriseTopUp';
+import EnterpriseDashboardPage from '../pages/Enterprise/EnterpriseDashboardPage';
 
 const AppRoute = () => {
     return (
@@ -36,7 +36,7 @@ const AppRoute = () => {
 
             {/* --- 3.5. Enterprise Routes --- */}
             <Route element={<RoleGuard allowedRoles={['ADMIN', 'ENTERPRISE']} />}>
-                <Route path="/enterprise/dashboard" element={<EnterpriseTopUp />} />
+                <Route path="/enterprise/dashboard" element={<EnterpriseDashboardPage />} />
             </Route>
 
             {/* --- 4. Error Routes --- */}

@@ -20,7 +20,7 @@ const EnterpriseTopUp = () => {
                 getEnterpriseHistory()
             ]);
             
-            const staffUsers = usersRes.data.filter(u => u.role === 'STAFF');
+            const staffUsers = usersRes.data.filter(u => u.role === 'CUSTOMER');
             setStaffs(staffUsers);
 
             if (historyRes.data?.status === 'Thành công') {
@@ -104,13 +104,16 @@ const EnterpriseTopUp = () => {
 
             <Row gutter={[24, 24]} className="mb-8">
                 <Col xs={24} md={12} lg={8}>
-                    <Card className="shadow-sm rounded-2xl border-none bg-gradient-to-br from-orange-500 to-orange-600">
+                    <Card 
+                        className="shadow-sm rounded-2xl border-none"
+                        style={{ background: 'linear-gradient(to bottom right, #f97316, #ea580c)' }}
+                    >
                         <Statistic 
-                            title={<span className="text-white/80 font-medium">Tổng tiền đã nạp (VND)</span>}
+                            title={<span style={{ color: 'rgba(255,255,255,0.8)', fontWeight: '500' }}>Tổng tiền đã nạp (VND)</span>}
                             value={totalToppedUp} 
                             formatter={(val) => val.toLocaleString('vi-VN')}
                             valueStyle={{ color: '#fff', fontWeight: 'bold', fontSize: '32px' }}
-                            prefix={<ArrowUpRight className="opacity-80" />}
+                            prefix={<ArrowUpRight style={{ opacity: 0.8 }} />}
                         />
                     </Card>
                 </Col>
