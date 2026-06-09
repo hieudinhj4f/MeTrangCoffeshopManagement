@@ -9,6 +9,7 @@ import ProductManagementPage from './product/ProductManagementPage.jsx';
 import OrderManagement from '../Employee/Order/OrderManagement.jsx';
 import StatisticsPage from '../Admin/static/StatisticPage.jsx';
 import OrderPOS from '../Employee/Order/OrderPOS.jsx';
+import EnterpriseTopUp from '../Enterprise/EnterpriseTopUp.jsx';
 import { Orbit } from 'lucide-react';
 
 const DashboardPage = () => {
@@ -19,6 +20,7 @@ const DashboardPage = () => {
   // Nhóm Hệ thống: Những gì mang tính điều phối chung
   { id: 'dash', label: 'Bảng điều khiển', icon: 'fa-chart-pie', group: 'Hệ thống' },
   { id: 'accounts', label: 'Quản lý nhân viên', icon: 'fa-users-gear', group: 'Hệ thống' },
+  { id: 'wallet_topup', label: 'Quản lý quỹ nội bộ', icon: 'fa-wallet', group: 'Hệ thống' },
 
   // Nhóm Kho hàng: Tập trung toàn bộ nghiệp vụ hàng hóa
   { id: 'inventory', label: 'Tồn kho vật phẩm', icon: 'fa-boxes-stacked', group: 'Kho hàng' },
@@ -59,6 +61,9 @@ const DashboardPage = () => {
         );
     case 'accounts':
       return <EmployeeManagement />;
+
+    case 'wallet_topup':
+      return <EnterpriseTopUp />;
 
     case 'inventory':
       return <WarehousePage />;
