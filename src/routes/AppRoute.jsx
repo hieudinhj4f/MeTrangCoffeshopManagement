@@ -2,14 +2,12 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import IntroducePage from '../pages/IntroducePage';
 import Login from '../pages/Login';
-import Register from '../pages/Register';
 import DashboardPage from '../pages/Admin/DashboardPage';
 import RoleGuard from '../guard/RoleGuard';
 import HomePage from '../pages/Client/HomePage';
 
 // ── 1. IMPORT CHÍNH XÁC ĐƯỜNG DẪN ĐẾN CÁC THƯ MỤC CON MỚI CỦA HIẾU ──
 import ProfilePage from '../pages/Client/profile/ProfilePage';
-import RankDisplay from '../pages/Client/rank/RankDisplay';
 import EnterpriseDashboardPage from '../pages/Enterprise/EnterpriseDashboardPage';
 
 const AppRoute = () => {
@@ -18,7 +16,6 @@ const AppRoute = () => {
             {/* --- 1. Public Routes (Ai cũng vào được) --- */}
             <Route path="/" element={<IntroducePage />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
 
             {/* --- 2. Customer Routes (Chỉ Khách hàng và Admin) --- */}
             <Route element={<RoleGuard allowedRoles={['CUSTOMER', 'ADMIN']} />}>
@@ -26,7 +23,6 @@ const AppRoute = () => {
                 
                 {/* ── 2. KHAI BÁO CÁC TUYẾN ĐƯỜNG MỚI NẰM TRONG GUARD TẠI ĐÂY ── */}
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/rank-details" element={<RankDisplay />} />
             </Route>
 
             {/* --- 3. Admin & Staff Routes (Trang quản trị Mê Trang) --- */}

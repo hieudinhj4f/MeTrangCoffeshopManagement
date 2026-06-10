@@ -11,7 +11,7 @@ export default function OrderPOS() {
   const [loadingMenu, setLoadingMenu] = useState(false);
 
   const [cart, setCart] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState('CASH');
+  const [paymentMethod, setPaymentMethod] = useState('WALLET');
   const [showPinModal, setShowPinModal] = useState(false);
   const [pinCode, setPinCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -61,7 +61,7 @@ export default function OrderPOS() {
     if (e.key === 'Enter') {
       if (!searchQuery.trim()) {
         setSelectedCustomer(null);
-        setPaymentMethod('CASH');
+        setPaymentMethod('WALLET');
         return;
       }
       try {
@@ -71,27 +71,22 @@ export default function OrderPOS() {
         setSelectedCustomer(customerData);
         
         if (customerData.customerType === 'ENTERPRISE') {
-          setPaymentMethod('DEBT');
-          message.success(`Đã áp dụng giá sỉ cho: ${customerData.companyName || customerData.fullName}`);
+          message.success(`Đã áp dụng chiết khấu Doanh nghiệp: ${customerData.companyName || customerData.fullName}`);
         } else if (customerData.customerType === 'WORKER') {
-          setPaymentMethod('WALLET');
-          message.info(`Khách hàng Công nhân - Ưu tiên dùng Ví nội bộ`);
-        } else {
-          setPaymentMethod('CASH');
+          message.info(`Khách hàng Công nhân - Dùng Ví nội bộ để thanh toán`);
         }
+        setPaymentMethod('WALLET');
       } catch (error) {
         message.error('Không tìm thấy khách hàng này!');
         setSelectedCustomer(null);
-        setPaymentMethod('CASH');
+        setPaymentMethod('WALLET');
       }
     }
   };
 
   const handleCheckoutClick = () => {
     if (cart.length === 0) return message.warning('Giỏ hàng trống!');
-    if (paymentMethod === 'DEBT' && selectedCustomer?.customerType !== 'ENTERPRISE') {
-      return message.error('Chỉ doanh nghiệp đối tác mới được mua nợ!');
-    }
+
     
     if (paymentMethod === 'WALLET') {
       if (!selectedCustomer) return message.error('Vui lòng định danh khách hàng trước khi dùng Ví!');
@@ -120,11 +115,9 @@ export default function OrderPOS() {
       setShowPinModal(false);
       setPinCode('');
       
-      if(paymentMethod !== 'DEBT') {
-        setSelectedCustomer(null);
-        setSearchQuery('');
-        setPaymentMethod('CASH');
-      }
+      setSelectedCustomer(null);
+      setSearchQuery('');
+      setPaymentMethod('WALLET');
     } catch (error) {
       message.error(error.response?.data?.reason || 'Có lỗi xảy ra khi tạo đơn!');
     } finally {
@@ -192,7 +185,7 @@ export default function OrderPOS() {
               onKeyDown={handleSearchCustomer}
             />
             {selectedCustomer && (
-              <button onClick={() => { setSelectedCustomer(null); setSearchQuery(''); setPaymentMethod('CASH'); }} className="ml-2 text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
+              <button onClick={() => { setSelectedCustomer(null); setSearchQuery(''); setPaymentMethod('WALLET'); }} className="ml-2 text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
             )}
           </div>
           
@@ -248,24 +241,7 @@ export default function OrderPOS() {
 
         {/* Tổng tiền & Chốt đơn */}
         <div className="p-6 bg-white border-t border-slate-100 shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
-          <div className="grid grid-cols-3 gap-2 mb-6">
-            <button onClick={() => setPaymentMethod('CASH')} className={`py-3 flex flex-col items-center justify-center gap-1 rounded-xl border-2 transition-all ${paymentMethod === 'CASH' ? 'border-[#111827] bg-[#111827] text-white' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}>
-              <CreditCard size={16} />
-              <span className="text-[9px] font-black uppercase tracking-wider">Tiền mặt</span>
-            </button>
-            <button onClick={() => setPaymentMethod('WALLET')} className={`py-3 flex flex-col items-center justify-center gap-1 rounded-xl border-2 transition-all ${paymentMethod === 'WALLET' ? 'border-[#111827] bg-[#111827] text-white' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}>
-              <Wallet size={16} />
-              <span className="text-[9px] font-black uppercase tracking-wider">Ví Trả Trước</span>
-            </button>
-            <button 
-              disabled={selectedCustomer?.customerType !== 'ENTERPRISE'}
-              onClick={() => setPaymentMethod('DEBT')} 
-              className={`py-3 flex flex-col items-center justify-center gap-1 rounded-xl border-2 transition-all ${selectedCustomer?.customerType !== 'ENTERPRISE' ? 'opacity-40 cursor-not-allowed bg-slate-50 border-transparent' : paymentMethod === 'DEBT' ? 'border-orange-500 bg-orange-500 text-white' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
-            >
-              <FileText size={16} />
-              <span className="text-[9px] font-black uppercase tracking-wider">Công nợ</span>
-            </button>
-          </div>
+
 
           <div className="flex justify-between items-end mb-6">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cần thanh toán</span>

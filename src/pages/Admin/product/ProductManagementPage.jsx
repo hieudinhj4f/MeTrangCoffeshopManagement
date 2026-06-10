@@ -4,7 +4,6 @@ import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filte
 import axios from 'axios';
 
 
-import PriceConfigModal from '../../../components/warehouse/PriceConfigModal'; 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -19,7 +18,6 @@ const ProductManagementPage = () => {
 
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
-    const [priceConfigProduct, setPriceConfigProduct] = useState(null);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -142,13 +140,7 @@ const ProductManagementPage = () => {
             key: 'action',
             render: (r) => (
                 <Space>
-                    {/* 💡 THÊM NÚT CẤU HÌNH GIÁ VÀO ĐÂY */}
-                    <Button 
-                        type="text" 
-                        title="Cấu hình giá/Sự kiện"
-                        icon={<TagIcon size={18} color="#3b82f6" />} 
-                        onClick={() => setPriceConfigProduct(r)} 
-                    />
+
 
                     <Button type="text" icon={<Edit3 size={18} color="#d4af37" />} onClick={() => { 
                         setEditingProduct(r); 
@@ -262,13 +254,7 @@ const ProductManagementPage = () => {
                 </Form>
             </Modal>
 
-            {/* 💡 NHÚNG MODAL CẤU HÌNH GIÁ VÀO ĐÂY */}
-            <PriceConfigModal 
-                isOpen={!!priceConfigProduct} 
-                onClose={() => setPriceConfigProduct(null)} 
-                product={priceConfigProduct} 
-                onPriceAdded={fetchProducts} 
-            />
+
         </div>
     );
 };

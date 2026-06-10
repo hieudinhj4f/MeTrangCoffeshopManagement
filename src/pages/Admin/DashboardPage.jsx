@@ -3,7 +3,6 @@ import WarehousePage from './warehouse/WarehousePage.jsx';
 import B2BManager from './inventory/B2BManager.jsx';
 import AccountManagement from './account/AccountManagementPage.jsx';
 import SupplierPage from './supplier/SupplierPage.jsx';
-import RankManagement from './rank/RankManagement.jsx';
 import EmployeeManagement from './employee/EmployeeManagement.jsx';
 import ProductManagementPage from './product/ProductManagementPage.jsx';
 import OrderManagement from '../Employee/Order/OrderManagement.jsx';
@@ -29,7 +28,6 @@ const DashboardPage = () => {
 
   // Nhóm Đối tác: Quản lý bên ngoài
   { id: 'suppliers', label: 'Nhà cung cấp', icon: 'fa-handshake', group: 'Đối tác' },
-  { id: 'customers', label: 'Quản lý khách hàng', icon: 'fa-user-tag', group: 'Đối tác' },
 
 // Các module khác có thể thêm vào đây...
     {id:"orders", label: 'Quản lý đơn hàng', icon: 'fa-receipt', group: 'Đơn hàng'},
@@ -74,8 +72,7 @@ const DashboardPage = () => {
     case 'suppliers':
       return  <SupplierPage/>;
 
-    case 'customers':
-      return <RankManagement />;
+
 
     case 'export': 
       return <ProductManagementPage />;

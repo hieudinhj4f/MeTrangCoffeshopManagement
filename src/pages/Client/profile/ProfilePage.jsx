@@ -86,28 +86,13 @@ const ProfilePage = () => {
                 <h2 className="text-2xl font-bold text-[#92400e] m-0">
                   {customer?.fullName || user?.username || 'Khách hàng'}
                 </h2>
-                <Tag color="orange" icon={<TrophyOutlined />} className="px-3 py-0.5 text-sm font-bold rounded-full border-none bg-[#e8631a] text-white">
-                  {rankName}
-                </Tag>
+
               </div>
               <p className="text-gray-400 text-center sm:text-left mt-1 text-xs">
                 @{user?.username} · ID: {getCustomerId()?.slice(0, 8)}...
               </p>
 
-              <div className="mt-5 bg-[#fffbeb] p-4 rounded-2xl border border-[#fef3c7]">
-                <div className="flex justify-between text-sm font-bold text-[#92400e] mb-2">
-                  <span>Tiến độ nâng hạng Vàng:</span>
-                  <span>
-                    {totalSpent.toLocaleString('vi-VN')}đ / {NEXT_RANK_MILESTONE.toLocaleString('vi-VN')}đ
-                  </span>
-                </div>
-                <Progress
-                  percent={rankProgress}
-                  strokeColor={{ '0%': '#f3a638', '100%': '#e8631a' }}
-                  railColor="#e5e7eb"
-                  status="active"
-                />
-              </div>
+
             </Col>
           </Row>
         </Card>
@@ -131,7 +116,7 @@ const ProfilePage = () => {
                 >
                   Mua hàng
                 </Button>
-                <Button onClick={() => navigate('/rank-details')}>Xem hạng</Button>
+
               </div>
             </Card>
           </Col>
@@ -150,12 +135,7 @@ const ProfilePage = () => {
                   <span className="font-semibold text-gray-500">Email:</span>
                   <span className="font-medium text-gray-800">{customer?.email || 'Chưa cập nhật'}</span>
                 </div>
-                <div className="flex justify-between pt-1">
-                  <span className="font-semibold text-gray-500">Ưu đãi hạng:</span>
-                  <span className="font-medium text-[#e8631a]">
-                    {customer?.discountRate != null ? `${customer.discountRate}%` : '0%'}
-                  </span>
-                </div>
+
               </div>
             </Card>
           </Col>

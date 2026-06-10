@@ -63,12 +63,6 @@ const Login = () => {
             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
-        <p className="text-center mt-6 text-sm text-[#92400e]">
-          Chưa có tài khoản?{' '}
-          <Link to="/register" className="font-semibold underline">
-            Đăng ký ngay
-          </Link>
-        </p>
       </div>
     </div>
   );

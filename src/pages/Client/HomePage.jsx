@@ -431,12 +431,10 @@ export default function HomePage() {
       return;
     }
 
-    // Xác định phương thức thanh toán
-    // Nếu có load được số dư ví -> Trả bằng ví. Nếu không -> Trả tiền mặt
-    const currentPaymentMethod = walletBalance !== null ? 'WALLET' : 'CASH';
+    // Bắt buộc thanh toán bằng Ví Nội Bộ (Ví Trả Trước)
+    const currentPaymentMethod = 'WALLET';
 
-    // Chỉ chặn lỗi thiếu tiền NẾU khách hàng đang thanh toán bằng Ví
-    if (currentPaymentMethod === 'WALLET' && walletBalance < totalAmount) {
+    if (walletBalance < totalAmount) {
       message.warning('Số dư ví không đủ. Vui lòng nạp thêm tiền.');
       return;
     }
