@@ -33,8 +33,7 @@ export default function OrderPOS() {
 
 
   const getDisplayPrice = (item) => {
-    // Ưu tiên giá sự kiện (salePrice), nếu không có thì lấy giá gốc (basePrice)
-    const currentPrice = item.salePrice > 0 ? item.salePrice : (item.basePrice || 0);
+    const currentPrice = item.basePrice || 0;
     
     if (selectedCustomer?.customerType === 'ENTERPRISE') {
       return currentPrice * 0.85; // Chiết khấu 15% cho Doanh nghiệp
@@ -157,7 +156,7 @@ export default function OrderPOS() {
                   <span className="font-black text-orange-500">{getDisplayPrice(item).toLocaleString()}đ</span>
                   {selectedCustomer?.customerType === 'ENTERPRISE' && (
                     <span className="text-[10px] line-through text-slate-400">
-                      {(item.salePrice > 0 ? item.salePrice : (item.basePrice || 0)).toLocaleString()}đ
+                      {(item.basePrice || 0).toLocaleString()}đ
                     </span>
                   )}
 

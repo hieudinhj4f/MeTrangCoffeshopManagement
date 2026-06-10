@@ -10,7 +10,7 @@ import {
   importStock,
 } from '../../../services/warehouseService';
 
-const EMPTY_ROW = { productId: '', sku: '---', unit: '---', quantity: 0, price: 0, total: 0 };
+const EMPTY_ROW = { productId: '', sku: '---', unit: '---', quantity: 0, price: 0, total: 0, batchCode: '', expiryDate: dayjs().add(6, 'month') };
 
 const readVndMoney = (amount) => {
   if (amount === 0) return 'Không đồng';
@@ -97,6 +97,12 @@ const TransactionTab = ({ warehouseId }) => {
     setReceiptRows(updatedRows);
   };
 
+  const handleTextChange = (value, field, index) => {
+    const updatedRows = [...receiptRows];
+    updatedRows[index][field] = value;
+    setReceiptRows(updatedRows);
+  };
+
   const addRow = () => {
     setReceiptRows([...receiptRows, { ...EMPTY_ROW }]);
   };
@@ -145,6 +151,8 @@ const TransactionTab = ({ warehouseId }) => {
         productId: Number(row.productId),
         quantity: row.quantity,
         price: row.price,
+        batchCode: row.batchCode || 'TEMP-BATCH',
+        expiryDate: row.expiryDate ? row.expiryDate.format('YYYY-MM-DD') : dayjs().add(6, 'month').format('YYYY-MM-DD')
       })),
     };
 
@@ -361,22 +369,24 @@ const TransactionTab = ({ warehouseId }) => {
           </div>
 
           <div>
-            <div className="grid grid-cols-12 gap-4 border-b border-slate-100 pb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              <div className="col-span-4">Tên vật phẩm</div>
-              <div className="col-span-2 text-center">Mã SKU</div>
-              <div className="col-span-1 text-center">ĐVT</div>
-              <div className="col-span-2 text-center">Thực nhập</div>
-              <div className="col-span-2 text-center">Đơn giá</div>
-              <div className="col-span-1 text-right">Thành tiền</div>
+            <div className="grid grid-cols-[3fr_1fr_1fr_2fr_2fr_1.5fr_1.5fr_1fr] gap-4 border-b border-slate-100 pb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              <div>Tên vật phẩm</div>
+              <div className="text-center">Mã SKU</div>
+              <div className="text-center">ĐVT</div>
+              <div className="text-center">Mã lô</div>
+              <div className="text-center">Hạn SD</div>
+              <div className="text-center">Thực nhập</div>
+              <div className="text-center">Đơn giá</div>
+              <div className="text-right">Thành tiền</div>
             </div>
 
             <div className="divide-y divide-slate-50 max-h-[300px] overflow-y-auto pr-2 mt-2">
               {receiptRows.map((row, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-12 gap-4 items-center py-4 hover:bg-slate-50/30 group"
+                  className="grid grid-cols-[3fr_1fr_1fr_2fr_2fr_1.5fr_1.5fr_1fr] gap-4 items-center py-4 hover:bg-slate-50/30 group"
                 >
-                  <div className="col-span-4">
+                  <div>
                     <Select
                       showSearch
                       className="w-full text-sm font-semibold"
@@ -390,13 +400,30 @@ const TransactionTab = ({ warehouseId }) => {
                       }))}
                     />
                   </div>
-                  <div className="col-span-2 text-center text-xs font-bold text-slate-400 bg-slate-50 py-2 rounded-lg">
+                  <div className="text-center text-xs font-bold text-slate-400 bg-slate-50 py-2 rounded-lg">
                     {row.sku}
                   </div>
-                  <div className="col-span-1 text-center text-xs font-bold text-slate-400">
+                  <div className="text-center text-xs font-bold text-slate-400">
                     {row.unit}
                   </div>
-                  <div className="col-span-2 text-center">
+                  <div className="text-center">
+                    <Input
+                      placeholder="Mã lô..."
+                      value={row.batchCode}
+                      onChange={(e) => handleTextChange(e.target.value, 'batchCode', index)}
+                      className="w-full text-center rounded-lg font-bold text-xs"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <DatePicker
+                      value={row.expiryDate}
+                      onChange={(date) => handleTextChange(date, 'expiryDate', index)}
+                      format="DD/MM/YYYY"
+                      allowClear={false}
+                      className="w-full text-center rounded-lg font-bold text-xs"
+                    />
+                  </div>
+                  <div className="text-center">
                     <InputNumber
                       min={0}
                       className="w-full rounded-lg text-center font-bold"
@@ -404,7 +431,7 @@ const TransactionTab = ({ warehouseId }) => {
                       onChange={(val) => handleValueChange(val, 'quantity', index)}
                     />
                   </div>
-                  <div className="col-span-2 text-center">
+                  <div className="text-center">
                     <InputNumber
                       min={0}
                       formatter={(value) =>
@@ -415,7 +442,7 @@ const TransactionTab = ({ warehouseId }) => {
                       onChange={(val) => handleValueChange(val, 'price', index)}
                     />
                   </div>
-                  <div className="col-span-1 text-right text-xs font-black text-slate-700 flex items-center justify-end gap-2">
+                  <div className="text-right text-xs font-black text-slate-700 flex items-center justify-end gap-2">
                     <span>{row.total.toLocaleString('vi-VN')}đ</span>
                     <Button
                       type="text"
@@ -483,9 +510,11 @@ const TransactionTab = ({ warehouseId }) => {
           <thead>
             <tr>
               <th className="text-center" style={{ width: '5%' }}>Stt</th>
-              <th className="text-center" style={{ width: '15%' }}>Mã hàng</th>
-              <th style={{ width: '40%' }}>Tên hàng hóa</th>
-              <th className="text-center" style={{ width: '10%' }}>Đvt</th>
+              <th className="text-center" style={{ width: '10%' }}>Mã hàng</th>
+              <th style={{ width: '25%' }}>Tên hàng hóa</th>
+              <th className="text-center" style={{ width: '5%' }}>Đvt</th>
+              <th className="text-center" style={{ width: '10%' }}>Mã lô</th>
+              <th className="text-center" style={{ width: '15%' }}>HSD</th>
               <th className="text-center" style={{ width: '10%' }}>Số lượng</th>
               <th className="text-right" style={{ width: '10%' }}>Đơn giá</th>
               <th className="text-right" style={{ width: '10%' }}>Thành tiền</th>
@@ -500,6 +529,8 @@ const TransactionTab = ({ warehouseId }) => {
                   <td className="text-center">{row.sku}</td>
                   <td>{productName}</td>
                   <td className="text-center">{row.unit}</td>
+                  <td className="text-center">{row.batchCode || 'TEMP-BATCH'}</td>
+                  <td className="text-center">{row.expiryDate ? row.expiryDate.format('DD/MM/YYYY') : '---'}</td>
                   <td className="text-center">{row.quantity}</td>
                   <td className="text-right">{row.price.toLocaleString('vi-VN')}</td>
                   <td className="text-right">{row.total.toLocaleString('vi-VN')}</td>
@@ -507,7 +538,7 @@ const TransactionTab = ({ warehouseId }) => {
               );
             })}
             <tr>
-              <td colSpan="3" style={{ fontWeight: 'bold' }}>Tổng cộng</td>
+              <td colSpan="5" style={{ fontWeight: 'bold' }}>Tổng cộng</td>
               <td className="text-center" style={{ fontWeight: 'bold' }} />
               <td className="text-center" style={{ fontWeight: 'bold' }}>{totalQty}</td>
               <td style={{ fontWeight: 'bold' }}>Tiền hàng:</td>
@@ -516,14 +547,14 @@ const TransactionTab = ({ warehouseId }) => {
               </td>
             </tr>
             <tr>
-              <td colSpan="4" style={{ border: 'none' }} />
+              <td colSpan="6" style={{ border: 'none' }} />
               <td colSpan="2" style={{ fontWeight: 'bold' }}>Tiền CK:</td>
               <td className="text-right" style={{ fontWeight: 'bold', color: 'red' }}>
                 {discount.toLocaleString('vi-VN')}
               </td>
             </tr>
             <tr>
-              <td colSpan="4" style={{ border: 'none' }} />
+              <td colSpan="6" style={{ border: 'none' }} />
               <td colSpan="2" style={{ fontWeight: 'bold' }}>Thanh toán:</td>
               <td className="text-right" style={{ fontWeight: 'bold' }}>
                 {finalTotalValue.toLocaleString('vi-VN')}

@@ -31,4 +31,4 @@ api.interceptors.response.use(
 export default api;
 
 export const getProductPrice = (product) =>
-  Number(product?.salePrice ?? product?.basePrice ?? product?.price ?? 0);
+  Number(product?.basePrice ?? product?.price ?? 0);

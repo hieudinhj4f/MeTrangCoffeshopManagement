@@ -123,15 +123,7 @@ const ProductManagementPage = () => {
             key: 'priceInfo',
             render: (r) => (
                 <div>
-                    {/* Đổi r.price thành r.basePrice */}
                     <Text strong>{r.basePrice?.toLocaleString()}đ</Text> 
-                    
-                    {/* Đổi r.discountPrice thành r.salePrice */}
-                    {r.salePrice && (
-                        <div style={{ fontSize: '12px', color: '#dc2626' }}>
-                            <Percent size={12} /> -{r.salePrice?.toLocaleString()}đ
-                        </div>
-                    )}
                 </div>
             )
         },
@@ -241,8 +233,7 @@ const ProductManagementPage = () => {
                     <Form.Item name="imageUrl" hidden><Input /></Form.Item>
 
                     <Row gutter={16}>
-                        <Col span={8}><Form.Item name="base_price" label="Giá bán"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
-                        <Col span={8}><Form.Item name="sale_price" label="Giá ưu đãi"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
+                        <Col span={8}><Form.Item name="basePrice" label="Giá bán"><InputNumber style={{width:'100%'}}/></Form.Item></Col>
                         <Col span={8}>
                             <Form.Item name="categoryId" label="Danh mục" rules={[{ required: true }]}>
                                 <Select>
