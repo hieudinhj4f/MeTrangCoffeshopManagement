@@ -445,6 +445,7 @@ export default function HomePage() {
         customerId: getCustomerId() || user.id,
         warehouseId: 1,
         paymentMethod: currentPaymentMethod, 
+        isOnlineOrder: true,
         items: cart.map((item) => ({
           productId: item.id,
           quantity: item.qty,
