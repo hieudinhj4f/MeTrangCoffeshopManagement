@@ -11,7 +11,7 @@ const AccountManagement = () => {
         setLoading(true);
         try {
             const response = await axios.get('https://metrangcompanybe.onrender.com', {
-                withCredentials: true // Quan trọng để khớp với cấu hình CORS mình vừa sửa
+                withCredentials: true
             });
             setUsers(response.data);
         } catch (error) {
@@ -30,13 +30,12 @@ const AccountManagement = () => {
         try {
             await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
             message.success("Đã vô hiệu hóa tài khoản!");
-            fetchUsers(); // Tải lại danh sách
+            fetchUsers();
         } catch (error) {
             message.error("Lỗi khi thực hiện!");
         }
     };
 
-    // 3. Định nghĩa các cột của bảng
     const columns = [
         {
             title: 'Tên tài khoản',
@@ -98,11 +97,11 @@ const AccountManagement = () => {
     return (
         <div style={{ padding: '24px' }}>
             <h2>Quản lý tài khoản nhân viên</h2>
-            <Table 
-                columns={columns} 
-                dataSource={users} 
-                rowKey="id" // Dùng UUID làm key cho mỗi dòng
-                loading={loading} 
+            <Table
+                columns={columns}
+                dataSource={users}
+                rowKey="id"
+                loading={loading}
             />
         </div>
     );

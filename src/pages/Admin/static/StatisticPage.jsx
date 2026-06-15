@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Typography, DatePicker, Table, Tabs, Tag, Progress, Spin, message } from 'antd';
+import { Row, Col, Card, Typography, DatePicker, Table, Tabs, Tag, Progress, Spin, message, Button } from 'antd';
 import { 
     DollarSign, ShoppingBag, Wallet, AlertTriangle, 
-    TrendingUp, TrendingDown, Clock, Activity 
+    TrendingUp, TrendingDown, Clock, Activity, Download
 } from 'lucide-react';
 import Chart from 'react-apexcharts';
 import dayjs from 'dayjs';
@@ -75,6 +75,18 @@ const StatisticPage = () => {
 
         fetchStatistics();
     }, [dateRange]); // Tự động chạy lại hàm này mỗi khi bạn đổi bộ lọc ngày
+
+    const handleExportExcel = () => {
+        if (!dateRange || dateRange.length !== 2) {
+            message.warning("Vui lòng chọn khoảng thời gian");
+            return;
+        }
+        const startDate = dateRange[0].format('YYYY-MM-DD');
+        const endDate = dateRange[1].format('YYYY-MM-DD');
+        // Sử dụng window.open để tải file
+        window.open(`https://metrangcompanybe.onrender.com/api/statistics/export/finance?startDate=${startDate}&endDate=${endDate}`, '_blank');
+        message.success("Đang xuất báo cáo Excel...");
+    };
 
     // ================= COMPONENT THẺ CHỈ SỐ =================
     const MetricCard = ({ title, value, subValue, icon, bg, trend, isGood }) => (
@@ -256,13 +268,31 @@ const StatisticPage = () => {
                     <Title level={2} style={{ color: '#fff', margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>TRUNG TÂM PHÂN TÍCH</Title>
                     <Text style={{ color: '#d4af37', fontWeight: 500, fontSize: '12px', letterSpacing: '1px' }}>BÁO CÁO TOÀN DIỆN MỌI CHỈ SỐ</Text>
                 </div>
-                <RangePicker 
-                    value={dateRange} 
-                    onChange={setDateRange} 
-                    format="DD/MM/YYYY" 
-                    style={{ height: '40px', borderRadius: '8px' }} 
-                    allowClear={false}
-                />
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <RangePicker 
+                        value={dateRange} 
+                        onChange={setDateRange} 
+                        format="DD/MM/YYYY" 
+                        style={{ height: '40px', borderRadius: '8px' }} 
+                        allowClear={false}
+                    />
+                    <Button 
+                        type="primary" 
+                        icon={<Download size={18} />} 
+                        onClick={handleExportExcel}
+                        style={{ 
+                            height: '40px', 
+                            borderRadius: '8px', 
+                            background: '#10b981', 
+                            borderColor: '#10b981',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontWeight: '600'
+                        }}
+                    >
+                        Xuất Excel
+                    </Button>
+                </div>
             </div>
             <Spin spinning={loading} tip="Đang tổng hợp số liệu...">
                 <Tabs 
