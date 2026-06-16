@@ -29,23 +29,24 @@ const ProductManagementPage = () => {
         } finally { setLoading(false); }
     };
 
-    useEffect(() => { fetchProducts(); }, []);
+    const [categories, setCategories] = useState([]);
+    const [isCatModalOpen, setIsCatModalOpen] = useState(false);
+    const [catForm] = Form.useForm();
+    const [catLoading, setCatLoading] = useState(false);
 
-    const categories = useMemo(() => {
-        const uniqueCats = [];
-        const map = new Map();
-        
-        products.forEach(p => {
-            const catId = p.categoryId || 0;
-            const catName = p.categoryName || 'Chưa phân loại';
-            
-            if (!map.has(catId)) {
-                map.set(catId, true);
-                uniqueCats.push({ id: catId, name: catName });
-            }
-        });
-        return uniqueCats;
-    }, [products]);
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('https://metrangcompanybe.onrender.com/api/categories', { withCredentials: true });
+            setCategories(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => { 
+        fetchProducts(); 
+        fetchCategories();
+    }, []);
 
     const filteredData = products.filter(p => {
         const matchSearch = (p.name || "").toLowerCase().includes(searchText.toLowerCase()) || 
@@ -91,6 +92,30 @@ const ProductManagementPage = () => {
         } catch (error) {
             message.error(error.response?.data?.reason || "Lỗi lưu dữ liệu!");
         } finally { setLoading(false); }
+    };
+
+    const handleSaveCategory = async (values) => {
+        setCatLoading(true);
+        try {
+            await axios.post('https://metrangcompanybe.onrender.com/api/categories', { name: values.name }, { withCredentials: true });
+            message.success("Thêm danh mục thành công!");
+            catForm.resetFields();
+            fetchCategories();
+        } catch (error) {
+            message.error(error.response?.data?.reason || "Lỗi khi lưu danh mục!");
+        } finally {
+            setCatLoading(false);
+        }
+    };
+
+    const handleDeleteCategory = async (id) => {
+        try {
+            await axios.delete(`https://metrangcompanybe.onrender.com/api/categories/${id}`, { withCredentials: true });
+            message.success("Xóa danh mục thành công!");
+            fetchCategories();
+        } catch (error) {
+            message.error(error.response?.data?.reason || "Lỗi khi xóa danh mục!");
+        }
     };
 
     const columns = [
@@ -159,15 +184,20 @@ const ProductManagementPage = () => {
                     <Title level={2} style={{ color: '#fff', margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>DANH MỤC HÀNG HÓA</Title>
                     <Text style={{ color: '#d4af37', fontWeight: 500 }}>B2B & RETAIL MANAGEMENT</Text>
                 </div>
-                <Button type="primary" icon={<Plus size={20} />} onClick={() => { 
-                    setEditingProduct(null); 
-                    form.resetFields(); 
-                    form.setFieldsValue({ isIngredient: false, active: true });
-                    setImageUrl(''); 
-                    setIsModalOpen(true); 
-                }} style={{ background: '#d4af37', border: 'none', height: '50px', borderRadius: '12px', fontWeight: 'bold' }}>
-                    THIẾT LẬP MỚI
-                </Button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <Button type="default" icon={<Layers size={20} />} onClick={() => setIsCatModalOpen(true)} style={{ height: '50px', borderRadius: '12px', fontWeight: 'bold' }}>
+                        QUẢN LÝ DANH MỤC
+                    </Button>
+                    <Button type="primary" icon={<Plus size={20} />} onClick={() => { 
+                        setEditingProduct(null); 
+                        form.resetFields(); 
+                        form.setFieldsValue({ isIngredient: false, active: true });
+                        setImageUrl(''); 
+                        setIsModalOpen(true); 
+                    }} style={{ background: '#d4af37', border: 'none', height: '50px', borderRadius: '12px', fontWeight: 'bold' }}>
+                        THIẾT LẬP MỚI
+                    </Button>
+                </div>
             </div>
 
             <Card bordered={false} style={{ borderRadius: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
@@ -257,6 +287,45 @@ const ProductManagementPage = () => {
             </Modal>
 
 
+            <Modal
+                title="QUẢN LÝ DANH MỤC HÀNG HÓA"
+                open={isCatModalOpen}
+                onCancel={() => setIsCatModalOpen(false)}
+                footer={null}
+                width={600}
+            >
+                <Form form={catForm} layout="inline" onFinish={handleSaveCategory} style={{ marginBottom: 24, marginTop: 16 }}>
+                    <Form.Item name="name" rules={[{ required: true, message: 'Nhập tên danh mục' }]} style={{ flex: 1 }}>
+                        <Input placeholder="Tên danh mục mới..." />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" loading={catLoading} style={{ background: '#0a1628' }}>
+                            Thêm Danh Mục
+                        </Button>
+                    </Form.Item>
+                </Form>
+
+                <Table 
+                    columns={[
+                        { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
+                        { title: 'Tên Danh Mục', dataIndex: 'name', key: 'name' },
+                        { 
+                            title: 'Thao tác', 
+                            key: 'action', 
+                            width: 100, 
+                            align: 'center',
+                            render: (_, record) => (
+                                <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => handleDeleteCategory(record.id)} />
+                            ) 
+                        }
+                    ]} 
+                    dataSource={categories} 
+                    rowKey="id" 
+                    pagination={false} 
+                    size="small"
+                    bordered
+                />
+            </Modal>
         </div>
     );
 };

@@ -345,6 +345,11 @@ export default function HomePage() {
   const [walletRank, setWalletRank] = useState('');
   const [showMenu, setShowMenu] = useState(false);
 
+  const [requiresInvoice, setRequiresInvoice] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [taxCode, setTaxCode] = useState('');
+  const [billingAddress, setBillingAddress] = useState('');
+
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }, [cart]);
@@ -431,6 +436,17 @@ export default function HomePage() {
       return;
     }
 
+    if (requiresInvoice) {
+      if (!taxCode || taxCode.trim() === '') {
+        message.warning('Vui lòng nhập Mã số thuế để xuất hóa đơn');
+        return;
+      }
+      if (!companyName || companyName.trim() === '') {
+        message.warning('Vui lòng nhập Tên Công Ty để xuất hóa đơn');
+        return;
+      }
+    }
+
     // Bắt buộc thanh toán bằng Ví Nội Bộ (Ví Trả Trước)
     const currentPaymentMethod = 'WALLET';
 
@@ -450,10 +466,18 @@ export default function HomePage() {
           productId: item.id,
           quantity: item.qty,
         })),
+        requiresInvoice: requiresInvoice,
+        companyName: companyName,
+        taxCode: taxCode,
+        billingAddress: billingAddress,
       });
 
       message.success(`Đặt hàng thành công! Mã đơn: ${response.data.orderId?.slice(0, 8)}...`);
       setCart([]);
+      setRequiresInvoice(false);
+      setCompanyName('');
+      setTaxCode('');
+      setBillingAddress('');
       localStorage.removeItem(CART_KEY);
       setDrawerOpen(false);
       fetchWallet(); 
@@ -709,6 +733,45 @@ export default function HomePage() {
                 <button type="button" className="topup-btn" onClick={handleTopUp}>Nạp tiền</button>
               </div>
             )}
+
+            <div style={{ padding: '12px 16px', background: '#fff', borderTop: '1px solid #f0f0f0', borderBottom: '1px solid #f0f0f0' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}>
+                <input 
+                  type="checkbox" 
+                  checked={requiresInvoice} 
+                  onChange={e => setRequiresInvoice(e.target.checked)} 
+                  style={{ width: '16px', height: '16px' }}
+                />
+                Yêu cầu xuất Hóa Đơn Đỏ (B2B)
+              </label>
+              
+              {requiresInvoice && (
+                <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <input
+                    type="text"
+                    placeholder="Mã số thuế (*)"
+                    value={taxCode}
+                    onChange={e => setTaxCode(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #d9d9d9', fontSize: '13px' }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Tên Công ty (*)"
+                    value={companyName}
+                    onChange={e => setCompanyName(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #d9d9d9', fontSize: '13px' }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Địa chỉ xuất hóa đơn (Tùy chọn)"
+                    value={billingAddress}
+                    onChange={e => setBillingAddress(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #d9d9d9', fontSize: '13px' }}
+                  />
+                </div>
+              )}
+            </div>
+
             <button
               className="checkout-btn"
               onClick={handleCheckout}

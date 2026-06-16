@@ -17,7 +17,8 @@ export default function B2BManager() {
     fullName: '',
     phoneNumber: '',
     email: '',
-    billingAddress: ''
+    billingAddress: '',
+    b2bDiscountRate: 0
   });
 
   const fetchPartners = async () => {
@@ -45,11 +46,12 @@ export default function B2BManager() {
         fullName: partner.fullName || '',
         phoneNumber: partner.phoneNumber || '',
         email: partner.email || '',
-        billingAddress: partner.billingAddress || ''
+        billingAddress: partner.billingAddress || '',
+        b2bDiscountRate: partner.b2bDiscountRate || 0
       });
     } else {
       setEditingId(null);
-      setFormData({ companyName: '', taxCode: '', fullName: '', phoneNumber: '', email: '', billingAddress: '' });
+      setFormData({ companyName: '', taxCode: '', fullName: '', phoneNumber: '', email: '', billingAddress: '', b2bDiscountRate: 0 });
     }
     setIsModalOpen(true);
   };
@@ -121,17 +123,18 @@ export default function B2BManager() {
         <table className="w-full text-[11px]">
           <thead>
             <tr className="border-b-2 border-slate-100 text-slate-400 uppercase font-black">
-              <th className="pb-4 text-left px-2">Doanh Nghiệp</th>
-              <th className="pb-4 text-left px-2">Mã Số Thuế</th>
-              <th className="pb-4 text-left px-2">Người Liên Hệ</th>
-              <th className="pb-4 text-right px-2">Tổng Chi Tiêu</th>
-              <th className="pb-4 text-right px-2 w-20">Thao Tác</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">Hồ Sơ Doanh Nghiệp</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">MST</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">Người Đại Diện</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-center px-2">Chiết Khấu</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-right px-2">Đã Chi Tiêu</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-right px-2 w-16">Thao Tác</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {filteredPartners.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-10 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                <td colSpan="6" className="py-10 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                   Chưa có đối tác nào.
                 </td>
               </tr>
@@ -161,6 +164,9 @@ export default function B2BManager() {
                     <div className="text-[10px] font-semibold text-slate-400 mt-1 flex items-center gap-1">
                       <Phone size={10} /> {partner.phoneNumber || '—'}
                     </div>
+                  </td>
+                  <td className="py-4 px-2 text-center font-bold text-slate-600 text-xs">
+                    {partner.b2bDiscountRate ? `${partner.b2bDiscountRate}%` : '—'}
                   </td>
                   <td className="py-4 px-2 text-right font-black text-orange-500 text-xs">
                     {partner.totalSpent ? partner.totalSpent.toLocaleString('vi-VN') : 0} đ
@@ -224,6 +230,11 @@ export default function B2BManager() {
                 <div className="col-span-2 flex flex-col gap-2">
                   <label className="text-[9px] font-black uppercase text-slate-400 ml-2 tracking-widest">Địa Chỉ Xuất Hóa Đơn <span className="text-red-500">*</span></label>
                   <input required name="billingAddress" value={formData.billingAddress} onChange={handleInputChange} className="bg-slate-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-slate-700 focus:ring-2 focus:ring-orange-500/20" placeholder="Tầng 1, Tòa nhà X..." />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-[9px] font-black uppercase text-slate-400 ml-2 tracking-widest">Chiết Khấu Đàm Phán (%)</label>
+                  <input type="number" step="0.1" min="0" max="100" name="b2bDiscountRate" value={formData.b2bDiscountRate} onChange={handleInputChange} className="bg-slate-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-slate-700 focus:ring-2 focus:ring-orange-500/20" placeholder="15" />
                 </div>
               </div>
 

@@ -38,6 +38,9 @@ const TransactionTab = ({ warehouseId }) => {
   const [receiptDate, setReceiptDate] = useState(dayjs());
   const [discount, setDiscount] = useState(0);
   const [showAllProducts, setShowAllProducts] = useState(false);
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [invoiceSymbol, setInvoiceSymbol] = useState('');
+  const [vatAmount, setVatAmount] = useState(0);
 
   const loadTransactions = useCallback(() => {
     if (!warehouseId) return;
@@ -130,10 +133,14 @@ const TransactionTab = ({ warehouseId }) => {
   };
 
   const resetForm = () => {
-    setDelivererName('');
-    setDiscount(0);
-    setReceiptDate(dayjs());
     setReceiptRows([{ ...EMPTY_ROW }]);
+    setDelivererName('');
+    setSelectedSupplierId(null);
+    setReceiptDate(dayjs());
+    setDiscount(0);
+    setInvoiceNumber('');
+    setInvoiceSymbol('');
+    setVatAmount(0);
   };
 
   const totalReceiptValue = receiptRows.reduce((sum, row) => sum + row.total, 0);
@@ -166,6 +173,9 @@ const TransactionTab = ({ warehouseId }) => {
       warehouseId: Number(warehouseId),
       createdDate: receiptDate.format('YYYY-MM-DDTHH:mm:ss'),
       discount,
+      invoiceNumber,
+      invoiceSymbol,
+      vatAmount,
       items: receiptRows.map((row) => ({
         productId: Number(row.productId),
         quantity: row.quantity,
@@ -365,6 +375,44 @@ const TransactionTab = ({ warehouseId }) => {
                 readOnly
                 value={currentWarehouseName}
                 className="h-12 rounded-xl bg-slate-50 text-sm font-semibold text-slate-600"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                Số Hóa Đơn (Tùy chọn)
+              </label>
+              <Input
+                placeholder="Ví dụ: 0001234"
+                value={invoiceNumber}
+                onChange={(e) => setInvoiceNumber(e.target.value)}
+                className="h-12 rounded-xl border-slate-100 bg-slate-50/50 text-sm font-semibold"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                Ký hiệu HĐ (Tùy chọn)
+              </label>
+              <Input
+                placeholder="Ví dụ: 1C23TDD"
+                value={invoiceSymbol}
+                onChange={(e) => setInvoiceSymbol(e.target.value)}
+                className="h-12 rounded-xl border-slate-100 bg-slate-50/50 text-sm font-semibold"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                Thuế VAT (VNĐ)
+              </label>
+              <InputNumber
+                min={0}
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                className="w-full h-12 rounded-xl text-sm font-semibold pt-1"
+                value={vatAmount}
+                onChange={(val) => setVatAmount(Number(val) || 0)}
+                placeholder="Tiền thuế..."
               />
             </div>
           </div>
