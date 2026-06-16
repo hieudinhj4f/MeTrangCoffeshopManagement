@@ -85,6 +85,12 @@ const EnterpriseTopUp = () => {
             render: (type) => <Tag color={type === 'DEPOSIT' ? 'green' : 'red'}>{type}</Tag>
         },
         {
+            title: 'Người nạp',
+            dataIndex: 'performedByName',
+            key: 'performedByName',
+            render: (name) => <Tag color="blue">{name || 'Hệ thống'}</Tag>
+        },
+        {
             title: 'Số tiền',
             dataIndex: 'amount',
             key: 'amount',

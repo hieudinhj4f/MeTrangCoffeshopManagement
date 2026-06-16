@@ -37,6 +37,7 @@ const TransactionTab = ({ warehouseId }) => {
   const [receiptRows, setReceiptRows] = useState([{ ...EMPTY_ROW }]);
   const [receiptDate, setReceiptDate] = useState(dayjs());
   const [discount, setDiscount] = useState(0);
+  const [showAllProducts, setShowAllProducts] = useState(false);
 
   const loadTransactions = useCallback(() => {
     if (!warehouseId) return;
@@ -53,9 +54,7 @@ const TransactionTab = ({ warehouseId }) => {
   useEffect(() => {
     getProducts()
       .then((res) => {
-        const allProducts = Array.isArray(res.data) ? res.data : [];
-        const ingredientsOnly = allProducts.filter(p => p.isIngredient === true);
-        setProducts(ingredientsOnly);
+        setProducts(Array.isArray(res.data) ? res.data : []);
       })
       .catch((err) => {
         console.error(err);
@@ -403,8 +402,16 @@ const TransactionTab = ({ warehouseId }) => {
           </div>
 
           <div>
-            <div className="grid grid-cols-[3fr_1fr_1fr_2fr_2fr_1.5fr_1.5fr_1fr] gap-4 border-b border-slate-100 pb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              <div>Tên vật phẩm</div>
+            <div className="grid grid-cols-[3fr_1fr_1fr_2fr_2fr_1.5fr_1.5fr_1fr] gap-4 border-b border-slate-100 pb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest items-center">
+              <div>
+                Tên vật phẩm
+                <div className="mt-1 font-normal text-xs normal-case text-slate-500">
+                  <label className="cursor-pointer flex items-center gap-1">
+                    <input type="checkbox" checked={showAllProducts} onChange={e => setShowAllProducts(e.target.checked)} />
+                    Hiển thị tất cả SP
+                  </label>
+                </div>
+              </div>
               <div className="text-center">Mã SKU</div>
               <div className="text-center">ĐVT</div>
               <div className="text-center">Mã lô</div>
@@ -415,7 +422,10 @@ const TransactionTab = ({ warehouseId }) => {
             </div>
 
             <div className="divide-y divide-slate-50 max-h-[300px] overflow-y-auto pr-2 mt-2">
-              {receiptRows.map((row, index) => (
+              {receiptRows.map((row, index) => {
+                const availableProducts = showAllProducts ? products : products.filter(p => p.isIngredient === true);
+                
+                return (
                 <div
                   key={index}
                   className="grid grid-cols-[3fr_1fr_1fr_2fr_2fr_1.5fr_1.5fr_1fr] gap-4 items-center py-4 hover:bg-slate-50/30 group"
@@ -428,7 +438,7 @@ const TransactionTab = ({ warehouseId }) => {
                       optionFilterProp="label"
                       value={row.productId || undefined}
                       onChange={(val) => handleProductChange(val, index)}
-                      options={products.map((p) => ({
+                      options={availableProducts.map((p) => ({
                         value: p.id,
                         label: `${p.name} (${p.sku || p.id})`,
                       }))}
@@ -487,7 +497,8 @@ const TransactionTab = ({ warehouseId }) => {
                     />
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
 
