@@ -556,7 +556,7 @@ export default function HomePage() {
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate('/wallet');
+                    navigate('/profile'); // Sửa thành /profile vì chưa có trang /wallet riêng
                   }}
                 >
                   💳 Quản lý Ví
