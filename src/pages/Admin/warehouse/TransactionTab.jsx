@@ -52,11 +52,26 @@ const TransactionTab = ({ warehouseId }) => {
 
   useEffect(() => {
     getProducts()
-      .then((res) => setProducts(Array.isArray(res.data) ? res.data : []))
+      .then((res) => {
+        const allProducts = Array.isArray(res.data) ? res.data : [];
+        const ingredientsOnly = allProducts.filter(p => p.isIngredient === true);
+        setProducts(ingredientsOnly);
+      })
       .catch((err) => {
         console.error(err);
         message.error('Không thể tải danh sách sản phẩm.');
       });
+  }, []);
+
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+
+  useEffect(() => {
+    import('../../../services/api').then(({ default: api }) => {
+      api.get('/suppliers')
+        .then((res) => setSuppliers(Array.isArray(res.data) ? res.data : []))
+        .catch((err) => console.error('Không tải được nhà cung cấp', err));
+    });
   }, []);
 
   useEffect(() => {
@@ -135,6 +150,10 @@ const TransactionTab = ({ warehouseId }) => {
       message.warning('Vui lòng nhập họ tên người giao hàng.');
       return;
     }
+    if (!selectedSupplierId) {
+      message.warning('Vui lòng chọn Nhà Cung Cấp.');
+      return;
+    }
 
     const hasInvalidRow = receiptRows.some((row) => !row.productId || row.quantity <= 0);
     if (hasInvalidRow) {
@@ -144,6 +163,7 @@ const TransactionTab = ({ warehouseId }) => {
 
     const payload = {
       delivererName,
+      supplierId: selectedSupplierId,
       warehouseId: Number(warehouseId),
       createdDate: receiptDate.format('YYYY-MM-DDTHH:mm:ss'),
       discount,
@@ -312,7 +332,21 @@ const TransactionTab = ({ warehouseId }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                Nhà cung cấp
+              </label>
+              <Select
+                showSearch
+                placeholder="Chọn Nhà Cung Cấp..."
+                value={selectedSupplierId}
+                onChange={setSelectedSupplierId}
+                optionFilterProp="label"
+                options={suppliers.map(s => ({ value: s.id, label: s.name }))}
+                className="w-full h-12 rounded-xl text-sm font-semibold"
+              />
+            </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                 Người giao hàng

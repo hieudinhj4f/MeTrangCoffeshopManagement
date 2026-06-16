@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Select, InputNumber, Avatar, Upload } from 'antd';
-import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filter, UploadCloud, Loader2, Tag as TagIcon } from 'lucide-react';
+import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Select, InputNumber, Avatar, Upload, Switch } from 'antd';
+import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filter, UploadCloud, Loader2, Tag as TagIcon, Layers } from 'lucide-react';
 import axios from 'axios';
 
 
@@ -116,7 +116,12 @@ const ProductManagementPage = () => {
         {
             title: 'DANH MỤC',
             dataIndex: 'categoryName',
-            render: (cat) => <Tag color="gold" style={{ borderRadius: '4px', fontWeight: 'bold' }}>{cat?.toUpperCase() || 'LINH KIỆN'}</Tag>
+            render: (cat, r) => (
+                <Space direction="vertical" size={0}>
+                    <Tag color="gold" style={{ borderRadius: '4px', fontWeight: 'bold' }}>{cat?.toUpperCase() || 'KHÁC'}</Tag>
+                    {r.isIngredient && <Tag color="blue" style={{ borderRadius: '4px', marginTop: '4px' }}>Nguyên liệu</Tag>}
+                </Space>
+            )
         },
         {
             title: 'GIÁ NIÊM YẾT',
@@ -157,6 +162,7 @@ const ProductManagementPage = () => {
                 <Button type="primary" icon={<Plus size={20} />} onClick={() => { 
                     setEditingProduct(null); 
                     form.resetFields(); 
+                    form.setFieldsValue({ isIngredient: false, active: true });
                     setImageUrl(''); 
                     setIsModalOpen(true); 
                 }} style={{ background: '#d4af37', border: 'none', height: '50px', borderRadius: '12px', fontWeight: 'bold' }}>
@@ -239,6 +245,11 @@ const ProductManagementPage = () => {
                                 <Select>
                                     {categories.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
                                 </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item name="isIngredient" label="Phân loại hàng" valuePropName="checked">
+                                <Switch checkedChildren="Nguyên liệu (Nhập kho)" unCheckedChildren="Sản phẩm (Bán ra)" />
                             </Form.Item>
                         </Col>
                     </Row> 

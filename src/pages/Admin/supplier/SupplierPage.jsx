@@ -216,11 +216,11 @@ const SupplierPage = () => {
                         <Input type="email" placeholder="email@metrang.com.vn" style={{ borderRadius: '8px' }} />
                     </Form.Item>
 
-                    <Form.Item name="taxCode" label="Mã số thuế">
+                    <Form.Item name="taxCode" label="Mã số thuế" rules={[{ required: true, message: 'Bắt buộc nhập' }]}>
                         <Input placeholder="Nhập MST" style={{ borderRadius: '8px' }} />
                     </Form.Item>
 
-                    <Form.Item name="address" label="Địa chỉ trụ sở">
+                    <Form.Item name="address" label="Địa chỉ trụ sở" rules={[{ required: true, message: 'Bắt buộc nhập' }]}>
                         <Input.TextArea rows={2} style={{ borderRadius: '8px' }} />
                     </Form.Item>
 

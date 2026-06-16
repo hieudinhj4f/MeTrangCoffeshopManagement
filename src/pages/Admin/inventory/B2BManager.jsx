@@ -62,8 +62,8 @@ export default function B2BManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.companyName || !formData.taxCode) {
-      message.warning('Vui lòng nhập Tên công ty và Mã số thuế!');
+    if (!formData.companyName || !formData.taxCode || !formData.billingAddress) {
+      message.warning('Vui lòng nhập Tên công ty, Mã số thuế và Địa chỉ xuất hóa đơn!');
       return;
     }
 
@@ -222,8 +222,8 @@ export default function B2BManager() {
                 </div>
 
                 <div className="col-span-2 flex flex-col gap-2">
-                  <label className="text-[9px] font-black uppercase text-slate-400 ml-2 tracking-widest">Địa Chỉ Xuất Hóa Đơn</label>
-                  <input name="billingAddress" value={formData.billingAddress} onChange={handleInputChange} className="bg-slate-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-slate-700 focus:ring-2 focus:ring-orange-500/20" placeholder="Tầng 1, Tòa nhà X..." />
+                  <label className="text-[9px] font-black uppercase text-slate-400 ml-2 tracking-widest">Địa Chỉ Xuất Hóa Đơn <span className="text-red-500">*</span></label>
+                  <input required name="billingAddress" value={formData.billingAddress} onChange={handleInputChange} className="bg-slate-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-slate-700 focus:ring-2 focus:ring-orange-500/20" placeholder="Tầng 1, Tòa nhà X..." />
                 </div>
               </div>
 
