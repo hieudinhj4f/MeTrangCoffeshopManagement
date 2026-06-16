@@ -538,7 +538,7 @@ export default function HomePage() {
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.location.href = '/profile';
+                    navigate('/profile');
                   }}
                 >
                   👤 Trang cá nhân
@@ -556,7 +556,7 @@ export default function HomePage() {
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.location.href = '/wallet';
+                    navigate('/wallet');
                   }}
                 >
                   💳 Quản lý Ví
@@ -574,7 +574,7 @@ export default function HomePage() {
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.location.href = '/order';
+                    navigate('/order');
                   }}
                 >
                   📦 Đơn hàng đã mua

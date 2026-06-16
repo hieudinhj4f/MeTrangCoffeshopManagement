@@ -42,6 +42,7 @@ const EmployeeModal = ({ open, onCancel, onSave, editingUser, form }) => {
                                 <Select.Option value="WAREHOUSE_KEEPER">THỦ KHO (WAREHOUSE)</Select.Option>
                                 <Select.Option value="DISPATCHER">ĐIỀU PHỐI (DISPATCHER)</Select.Option>
                                 <Select.Option value="STAFF">NHÂN VIÊN (STAFF)</Select.Option>
+                                <Select.Option value="CUSTOMER">KHÁCH HÀNG (CUSTOMER)</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>
