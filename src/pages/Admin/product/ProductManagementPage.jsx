@@ -97,7 +97,7 @@ const ProductManagementPage = () => {
     const handleSaveCategory = async (values) => {
         setCatLoading(true);
         try {
-            await axios.post('https://metrangcompanybe.onrender.com/api/categories', { name: values.name }, { withCredentials: true });
+            await axios.post('https://metrangcompanybe.onrender.com/api/categories', { categoryName: values.name }, { withCredentials: true });
             message.success("Thêm danh mục thành công!");
             catForm.resetFields();
             fetchCategories();
