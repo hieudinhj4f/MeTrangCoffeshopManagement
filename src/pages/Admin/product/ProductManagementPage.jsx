@@ -308,7 +308,7 @@ const ProductManagementPage = () => {
                 <Table 
                     columns={[
                         { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-                        { title: 'Tên Danh Mục', dataIndex: 'name', key: 'name' },
+                        { title: 'Tên Danh Mục', dataIndex: 'categoryName', key: 'categoryName' },
                         { 
                             title: 'Thao tác', 
                             key: 'action', 

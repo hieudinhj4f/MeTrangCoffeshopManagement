@@ -16,8 +16,9 @@ const toKanbanStatus = (status) => {
       return 'PROCESSING';
     case 'SHIPPING':
     case 'SHIPPED':
-      return 'SHIPPING';
     case 'DELIVERED':
+    case 'COMPLETED':
+      return 'COMPLETED';
     case 'COMPLETED':
       return 'COMPLETED';
     default:
@@ -210,15 +211,6 @@ const OrderManagementPage = () => {
           {order.status === 'PROCESSING' && (
             <Button
               type="primary"
-              className="bg-cyan-500 font-bold"
-              onClick={() => moveOrder(order.id, 'SHIPPING')}
-            >
-              GIAO HÀNG <Truck size={16} className="ml-1" />
-            </Button>
-          )}
-          {order.status === 'SHIPPING' && (
-            <Button
-              type="primary"
               className="bg-green-500 font-bold"
               onClick={() => moveOrder(order.id, 'COMPLETED')}
             >
@@ -327,7 +319,7 @@ const OrderManagementPage = () => {
               Đang xử lý
             </Text>
             <Text className="text-blue-400 text-xl font-black">
-              {orders.filter((o) => o.status === 'PROCESSING' || o.status === 'SHIPPING').length}
+              {orders.filter((o) => o.status === 'PROCESSING').length}
             </Text>
           </div>
         </div>
@@ -354,9 +346,9 @@ const OrderManagementPage = () => {
             'bg-blue-50/30'
           )}
           {renderColumn(
-            'SHIPPING',
-            '3. Đang đi giao',
-            <Truck size={18} />,
+            'COMPLETED',
+            '3. Đã hoàn thành',
+            <CheckCircle size={18} />,
             'text-green-600',
             'bg-green-50/30'
           )}
