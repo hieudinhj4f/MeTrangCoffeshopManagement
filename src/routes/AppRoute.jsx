@@ -17,8 +17,8 @@ const AppRoute = () => {
             <Route path="/" element={<IntroducePage />} />
             <Route path="/login" element={<Login />} />
 
-            {/* --- 2. Customer Routes (Chỉ Khách hàng và Admin) --- */}
-            <Route element={<RoleGuard allowedRoles={['CUSTOMER', 'ADMIN']} />}>
+            {/* --- 2. Customer Routes (Chỉ Khách hàng, Doanh nghiệp và Admin) --- */}
+            <Route element={<RoleGuard allowedRoles={['CUSTOMER', 'ENTERPRISE', 'ADMIN']} />}>
                 <Route path="/shop" element={<HomePage />} />
                 
                 {/* ── 2. KHAI BÁO CÁC TUYẾN ĐƯỜNG MỚI NẰM TRONG GUARD TẠI ĐÂY ── */}

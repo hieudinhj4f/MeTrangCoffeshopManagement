@@ -47,11 +47,12 @@ export default function B2BManager() {
         phoneNumber: partner.phoneNumber || '',
         email: partner.email || '',
         billingAddress: partner.billingAddress || '',
-        b2bDiscountRate: partner.b2bDiscountRate || 0
+        b2bDiscountRate: partner.b2bDiscountRate || 0,
+        creditLimit: partner.creditLimit || 50000000
       });
     } else {
       setEditingId(null);
-      setFormData({ companyName: '', taxCode: '', fullName: '', phoneNumber: '', email: '', billingAddress: '', b2bDiscountRate: 0 });
+      setFormData({ companyName: '', taxCode: '', fullName: '', phoneNumber: '', email: '', billingAddress: '', b2bDiscountRate: 0, creditLimit: 50000000 });
     }
     setIsModalOpen(true);
   };
@@ -127,6 +128,7 @@ export default function B2BManager() {
                 <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">MST</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">Người Đại Diện</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-center px-2">Chiết Khấu</th>
+                <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">Hạn mức Nợ</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-right px-2">Đã Chi Tiêu</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-right px-2 w-16">Thao Tác</th>
             </tr>
@@ -167,6 +169,10 @@ export default function B2BManager() {
                   </td>
                   <td className="py-4 px-2 text-center font-bold text-slate-600 text-xs">
                     {partner.b2bDiscountRate ? `${partner.b2bDiscountRate}%` : '—'}
+                  </td>
+                  <td className="py-4 px-4 font-semibold text-red-500">
+                    {(partner.creditLimit || 0).toLocaleString()} đ
+                  </td>
                   </td>
                   <td className="py-4 px-2 text-right font-black text-orange-500 text-xs">
                     {partner.totalSpent ? partner.totalSpent.toLocaleString('vi-VN') : 0} đ
@@ -235,6 +241,10 @@ export default function B2BManager() {
                 <div className="flex flex-col gap-2">
                   <label className="text-[9px] font-black uppercase text-slate-400 ml-2 tracking-widest">Chiết Khấu Đàm Phán (%)</label>
                   <input type="number" step="0.1" min="0" max="100" name="b2bDiscountRate" value={formData.b2bDiscountRate} onChange={handleInputChange} className="bg-slate-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-slate-700 focus:ring-2 focus:ring-orange-500/20" placeholder="15" />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs font-semibold text-slate-500 uppercase mb-2 ml-1">Hạn mức Nợ (VND)</label>
+                  <input type="number" step="100000" min="0" name="creditLimit" value={formData.creditLimit} onChange={handleInputChange} className="bg-slate-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-slate-700 focus:ring-2 focus:ring-orange-500/20" placeholder="50000000" />
                 </div>
               </div>
 
