@@ -25,7 +25,7 @@ export default function B2BManager() {
     setLoading(true);
     try {
       const res = await api.get('/customers/b2b');
-      setPartners(res.data);
+      setPartners(Array.isArray(res.data) ? res.data : (res.data?.data || []));
     } catch (error) {
       message.error(error.response?.data?.reason || 'Lỗi tải danh sách đối tác');
     } finally {
@@ -85,9 +85,9 @@ export default function B2BManager() {
     }
   };
 
-  const filteredPartners = partners.filter(p => 
-    (p.companyName || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (p.taxCode || '').includes(searchTerm)
+  const filteredPartners = (Array.isArray(partners) ? partners : []).filter(p => 
+    (p.companyName || '').toLowerCase().includes((searchTerm || '').toLowerCase()) || 
+    (p.taxCode || '').includes(searchTerm || '')
   );
 
   return (

@@ -48,7 +48,7 @@ const ProductManagementPage = () => {
         fetchCategories();
     }, []);
 
-    const filteredData = products.filter(p => {
+    const filteredData = (Array.isArray(products) ? products : []).filter(p => {
         const matchSearch = (p.name || "").toLowerCase().includes(searchText.toLowerCase()) || 
                             (p.sku || "").toLowerCase().includes(searchText.toLowerCase());
         const matchCategory = selectedCategory ? p.categoryId === selectedCategory : true;

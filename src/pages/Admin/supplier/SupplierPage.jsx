@@ -18,7 +18,7 @@ const SupplierPage = () => {
             const response = await axios.get('https://metrangcompanybe.onrender.com/api/suppliers', {
                 withCredentials: true 
             });
-            setSuppliers(response.data);
+            setSuppliers(Array.isArray(response.data) ? response.data : (response.data?.data || []));
         } catch (error) {
             message.error("Không thể tải dữ liệu nhà cung cấp!");
         } finally {
@@ -142,7 +142,7 @@ const SupplierPage = () => {
                     <Card borderless style={{ borderRadius: '16px' }}>
                         <Statistic 
                             title="ĐANG HỢP TÁC" 
-                            value={suppliers.filter(s => s.isActive).length} 
+                            value={(Array.isArray(suppliers) ? suppliers : []).filter(s => s.isActive).length} 
                             valueStyle={{ color: '#52c41a' }} 
                         />
                     </Card>
