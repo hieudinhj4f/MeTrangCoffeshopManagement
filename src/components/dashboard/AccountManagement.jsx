@@ -93,7 +93,7 @@ const AccountManagement = () => {
 
     return (
         <div style={{ padding: '24px' }}>
-            <h2>Quản lý tài khoản nhân viên</h2>
+            <h2>Quản lý tài khoản</h2>
             <Table 
                 columns={columns} 
                 dataSource={users} 

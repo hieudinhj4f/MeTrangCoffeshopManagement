@@ -12,8 +12,6 @@ export default function OrderPOS() {
 
   const [cart, setCart] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('WALLET');
-  const [showPinModal, setShowPinModal] = useState(false);
-  const [pinCode, setPinCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -86,24 +84,20 @@ export default function OrderPOS() {
   const handleCheckoutClick = () => {
     if (cart.length === 0) return message.warning('Giỏ hàng trống!');
 
-    
-    if (paymentMethod === 'WALLET') {
-      if (!selectedCustomer) return message.error('Vui lòng định danh khách hàng trước khi dùng Ví!');
-      setShowPinModal(true);
-      return;
+    if (paymentMethod === 'WALLET' && !selectedCustomer) {
+      return message.error('Vui lòng định danh khách hàng trước khi dùng Ví!');
     }
 
     executeOrder();
   };
 
-  const executeOrder = async (pin = null) => {
+  const executeOrder = async () => {
     setIsProcessing(true);
     try {
       const payload = {
         customerId: selectedCustomer?.id || null,
         warehouseId: 1,
         paymentMethod: paymentMethod,
-        pinCode: pin, 
         items: cart.map(i => ({ productId: i.id, quantity: i.qty }))
       };
       
@@ -111,8 +105,6 @@ export default function OrderPOS() {
       
       message.success('Chốt đơn thành công!');
       setCart([]);
-      setShowPinModal(false);
-      setPinCode('');
       
       setSelectedCustomer(null);
       setSearchQuery('');
@@ -253,39 +245,7 @@ export default function OrderPOS() {
         </div>
       </div>
 
-      {/* MODAL BẢO MẬT MÃ PIN (WALLET PAYMENT) */}
-      {showPinModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-[360px] rounded-[32px] shadow-2xl overflow-hidden border border-slate-100 p-8 text-center relative">
-            <button onClick={() => setShowPinModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-red-500"><X size={20} /></button>
-            
-            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">
-              <Lock size={28} />
-            </div>
-            
-            <h3 className="text-lg font-black text-slate-800 uppercase tracking-tighter mb-1">Xác Thực Ví Khách Hàng</h3>
-            <p className="text-xs font-bold text-slate-400 mb-6">Vui lòng yêu cầu khách hàng {selectedCustomer?.fullName} nhập mã PIN để thanh toán.</p>
-            
-            <input 
-              type="password" 
-              maxLength="4"
-              value={pinCode}
-              onChange={(e) => setPinCode(e.target.value.replace(/\D/g, ''))} // Chỉ cho nhập số
-              className="w-full text-center tracking-[1em] text-3xl font-black text-slate-800 bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 mb-6 outline-none focus:border-blue-500 transition-colors"
-              placeholder="••••"
-              autoFocus
-            />
-            
-            <button 
-              onClick={() => executeOrder(pinCode)} 
-              disabled={pinCode.length < 4 || isProcessing}
-              className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:hover:bg-blue-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[2px] transition-all"
-            >
-              Xác Nhận Trừ Tiền
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
 
     </div>
   );
