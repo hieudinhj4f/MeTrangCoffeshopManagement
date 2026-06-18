@@ -244,9 +244,6 @@ export default function OrderPOS() {
           </button>
         </div>
       </div>
-
-      </div>
-
     </div>
   );
 }
