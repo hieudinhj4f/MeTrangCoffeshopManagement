@@ -135,9 +135,9 @@ const EmployeeManagement = () => {
                 <div style={{ position: 'relative', zIndex: 2 }}>
                     <Space align="center" style={{ marginBottom: '16px' }}>
                         <ShieldCheck color="#e8631a" size={32} />
-                        <Text style={{ color: '#e8631a', letterSpacing: '3px', fontWeight: 600, fontSize: '12px' }}>HUMAN RESOURCES MANAGEMENT</Text>
+                        <Text style={{ color: '#e8631a', letterSpacing: '3px', fontWeight: 600, fontSize: '12px' }}>QUẢN LÝ TÀI KHOẢN HỆ THỐNG</Text>
                     </Space>
-                    <Title level={2} style={{ color: '#fff', margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>Quản Lý Nhân Sự Mê Trang</Title>
+                    <Title level={2} style={{ color: '#fff', margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>Danh Sách Tài Khoản</Title>
                 </div>
                 <Users size={200} color="#e8631a" style={{ position: 'absolute', right: '-40px', bottom: '-60px', opacity: 0.1 }} />
             </div>

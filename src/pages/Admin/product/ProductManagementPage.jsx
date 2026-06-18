@@ -140,13 +140,17 @@ const ProductManagementPage = () => {
         },
         {
             title: 'DANH MỤC',
-            dataIndex: 'categoryName',
-            render: (cat, r) => (
-                <Space direction="vertical" size={0}>
-                    <Tag color="gold" style={{ borderRadius: '4px', fontWeight: 'bold' }}>{cat?.toUpperCase() || 'KHÁC'}</Tag>
-                    {r.isIngredient && <Tag color="blue" style={{ borderRadius: '4px', marginTop: '4px' }}>Nguyên liệu</Tag>}
-                </Space>
-            )
+            dataIndex: 'categoryId',
+            render: (categoryId, r) => {
+                const cat = categories.find(c => c.id === categoryId);
+                const catName = cat?.categoryName || cat?.name || r.categoryName || 'KHÁC';
+                return (
+                    <Space direction="vertical" size={0}>
+                        <Tag color="gold" style={{ borderRadius: '4px', fontWeight: 'bold' }}>{catName.toUpperCase()}</Tag>
+                        {r.isIngredient && <Tag color="blue" style={{ borderRadius: '4px', marginTop: '4px' }}>Nguyên liệu</Tag>}
+                    </Space>
+                );
+            }
         },
         {
             title: 'GIÁ NIÊM YẾT',
