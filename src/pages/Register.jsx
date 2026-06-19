@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -11,9 +11,17 @@ const Register = () => {
     fullName: '',
     email: '',
     phone: '',
+    enterpriseId: '',
   });
+  const [enterprises, setEnterprises] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    api.get('/auth/enterprises')
+      .then(res => setEnterprises(res.data))
+      .catch(err => console.error('Lỗi tải danh sách doanh nghiệp', err));
+  }, []);
   const { login } = useAuth();
 
   const handleChange = (e) => {
@@ -23,8 +31,12 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
+    const payload = { ...form };
+    if (!payload.enterpriseId) delete payload.enterpriseId;
+
     try {
-      const response = await api.post('/auth/register', form);
+      const response = await api.post('/auth/register', payload);
       login(response.data);
       message.success('Đăng ký thành công!');
       navigate('/shop');
@@ -52,6 +64,18 @@ const Register = () => {
             className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-[#e8631a]" />
           <input name="phone" placeholder="Số điện thoại" value={form.phone} onChange={handleChange}
             className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-[#e8631a]" />
+          
+          <select 
+            name="enterpriseId" 
+            value={form.enterpriseId} 
+            onChange={handleChange}
+            className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-[#e8631a] bg-white text-gray-700"
+          >
+            <option value="">-- Thuộc doanh nghiệp? (Để trống nếu mua lẻ) --</option>
+            {enterprises.map(ent => (
+              <option key={ent.id} value={ent.id}>{ent.companyName}</option>
+            ))}
+          </select>
           <button type="submit" disabled={loading}
             className="w-full bg-[#e8631a] hover:bg-[#f5873b] text-white font-bold py-3 rounded-xl disabled:opacity-60">
             {loading ? 'Đang đăng ký...' : 'Đăng ký'}

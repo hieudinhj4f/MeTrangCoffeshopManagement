@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const EnterpriseWorkerPage = () => {
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { token } = useAuth();
 
   useEffect(() => {
     const fetchWorkers = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/customers/enterprise/workers', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get('/customers/enterprise/workers');
         setWorkers(response.data);
         setError(null);
       } catch (err) {
@@ -27,7 +21,7 @@ const EnterpriseWorkerPage = () => {
     };
 
     fetchWorkers();
-  }, [token]);
+  }, []);
 
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
