@@ -20,7 +20,7 @@ const EmployeeManagement = () => {
             const staffOnly = response.data.filter(u => u.role !== 'CUSTOMER');
             setUsers(staffOnly);
         } catch (error) {
-            message.error("Không thể tải danh sách nhân sự!");
+            message.error("Không thể tải danh sách tài khoản!");
         } finally {
             setLoading(false);
         }
@@ -32,10 +32,10 @@ const EmployeeManagement = () => {
         try {
             if (editingUser) {
                 await axios.put(`https://metrangcompanybe.onrender.com/api/users/${editingUser.id}`, values, { withCredentials: true });
-                message.success("Cập nhật thông tin nhân sự thành công!");
+                message.success("Cập nhật thông tin tài khoản thành công!");
             } else {
                 await axios.post('https://metrangcompanybe.onrender.com/api/users', values, { withCredentials: true });
-                message.success("Thêm nhân viên và tạo tài khoản thành công!");
+                message.success("Thêm tài khoản thành công!");
             }
             setIsModalOpen(false);
             fetchEmployees();
@@ -48,7 +48,7 @@ const EmployeeManagement = () => {
     const handleDeactivate = async (id) => {
         try {
             await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
-            message.success("Đã khóa tài khoản nhân viên!");
+            message.success("Đã khóa tài khoản!");
             fetchEmployees();
         } catch (error) {
             message.error("Lỗi khi thực hiện!");
@@ -57,7 +57,7 @@ const EmployeeManagement = () => {
 
     const columns = [
         {
-            title: 'NHÂN VIÊN',
+            title: 'TÀI KHOẢN',
             key: 'employee',
             render: (_, record) => (
                 <Space size="middle">
@@ -120,7 +120,7 @@ const EmployeeManagement = () => {
                     }} />
                     <Button type="text" icon={<Key size={18} color="#9b9690" />} />
                     {record.isActive && (
-                        <Popconfirm title="Khóa quyền truy cập của nhân viên này?" onConfirm={() => handleDeactivate(record.id)}>
+                        <Popconfirm title="Khóa quyền truy cập của tài khoản này?" onConfirm={() => handleDeactivate(record.id)}>
                             <Button type="text" danger icon={<UserX size={18} />} />
                         </Popconfirm>
                     )}
@@ -145,7 +145,7 @@ const EmployeeManagement = () => {
             <Row gutter={[24, 24]} style={{ marginBottom: '40px' }}>
                 <Col span={8}>
                     <Card borderless style={{ borderRadius: '16px' }}>
-                        <Statistic title="TỔNG NHÂN VIÊN" value={users.length} prefix={<Users size={20} color="#e8631a" />} />
+                        <Statistic title="TỔNG TÀI KHOẢN" value={users.length} prefix={<Users size={20} color="#e8631a" />} />
                     </Card>
                 </Col>
                 <Col span={8}>
@@ -162,8 +162,8 @@ const EmployeeManagement = () => {
 
             <Card borderless style={{ borderRadius: '24px', boxShadow: '0 2px 20px rgba(10,22,40,0.05)' }}>
                 <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between' }}>
-                    <Input prefix={<Search size={18} color="#9b9690" />} placeholder="Tìm nhân viên..." style={{ width: 400, borderRadius: '12px', background: '#f2f1ee', border: 'none', height: '45px' }} />
-                    <Button type="primary" icon={<Plus size={18} />} style={{ background: '#0a1628', border: 'none', borderRadius: '12px', height: '45px', padding: '0 24px' }} onClick={() => { setEditingUser(null); form.resetFields(); setIsModalOpen(true); }}>THÊM NHÂN VIÊN MỚI</Button>
+                    <Input prefix={<Search size={18} color="#9b9690" />} placeholder="Tìm tài khoản..." style={{ width: 400, borderRadius: '12px', background: '#f2f1ee', border: 'none', height: '45px' }} />
+                    <Button type="primary" icon={<Plus size={18} />} style={{ background: '#0a1628', border: 'none', borderRadius: '12px', height: '45px', padding: '0 24px' }} onClick={() => { setEditingUser(null); form.resetFields(); setIsModalOpen(true); }}>THÊM TÀI KHOẢN MỚI</Button>
                 </div>
                 <Table columns={columns} dataSource={users} rowKey="id" loading={loading} pagination={{ pageSize: 8 }} />
             </Card>

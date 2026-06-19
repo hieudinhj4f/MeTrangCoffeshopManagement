@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import EnterpriseTopUp from './EnterpriseTopUp';
+import EnterpriseWorkerPage from './EnterpriseWorkerPage';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const EnterpriseDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState('wallet');
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
@@ -32,10 +34,19 @@ const EnterpriseDashboardPage = () => {
         <nav className="flex-1 overflow-y-auto py-6 space-y-1 custom-scrollbar">
           <p className="px-8 mt-6 mb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Hệ thống</p>
           <button 
-            className="w-full flex items-center px-6 py-3 transition-all text-orange-500 bg-orange-500/5 border-r-4 border-orange-500"
+            onClick={() => setActiveTab('wallet')}
+            className={`w-full flex items-center px-6 py-3 transition-all ${activeTab === 'wallet' ? 'text-orange-500 bg-orange-500/5 border-r-4 border-orange-500' : 'text-slate-400 hover:text-white hover:bg-white/5 border-r-4 border-transparent'}`}
           >
             <i className="fas fa-wallet w-5 text-sm"></i>
-            {isSidebarOpen && <span className="ml-4 text-[10px] font-bold">Quản lý quỹ nội bộ</span>}
+            {isSidebarOpen && <span className="ml-4 text-[10px] font-bold uppercase tracking-wider">Quản lý quỹ</span>}
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('workers')}
+            className={`w-full flex items-center px-6 py-3 transition-all ${activeTab === 'workers' ? 'text-orange-500 bg-orange-500/5 border-r-4 border-orange-500' : 'text-slate-400 hover:text-white hover:bg-white/5 border-r-4 border-transparent'}`}
+          >
+            <i className="fas fa-users w-5 text-sm"></i>
+            {isSidebarOpen && <span className="ml-4 text-[10px] font-bold uppercase tracking-wider">Nhân sự</span>}
           </button>
         </nav>
         
@@ -86,7 +97,8 @@ const EnterpriseDashboardPage = () => {
 
         {/* 3. CONTENT AREA */}
         <div className="flex-1 overflow-y-auto p-8 bg-[#F8FAFC]">
-           <EnterpriseTopUp />
+           {activeTab === 'wallet' && <EnterpriseTopUp />}
+           {activeTab === 'workers' && <EnterpriseWorkerPage />}
         </div>
       </div>
 

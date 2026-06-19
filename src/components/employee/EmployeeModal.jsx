@@ -8,7 +8,7 @@ const EmployeeModal = ({ open, onCancel, onSave, editingUser, form }) => {
         <Modal 
             title={
                 <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '24px', color: '#0a1628' }}>
-                    {editingUser ? "HIỆU CHỈNH NHÂN SỰ" : "THÊM NHÂN VIÊN HỆ THỐNG"}
+                    {editingUser ? "HIỆU CHỈNH TÀI KHOẢN" : "THÊM TÀI KHOẢN MỚI"}
                 </div>
             } 
             open={open}
