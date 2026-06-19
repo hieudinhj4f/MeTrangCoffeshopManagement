@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Col, Input, Select, Typography } from 'antd';
+import axios from 'axios';
 
 const { Text } = Typography;
 
 const EmployeeModal = ({ open, onCancel, onSave, editingUser, form }) => {
+    const [enterprises, setEnterprises] = useState([]);
+    const selectedRole = Form.useWatch('role', form);
+
+    useEffect(() => {
+        if (open) {
+            axios.get('https://metrangcompanybe.onrender.com/api/customers/b2b', { withCredentials: true })
+                .then(res => {
+                    const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+                    setEnterprises(data);
+                })
+                .catch(err => console.error(err));
+        }
+    }, [open]);
     return (
         <Modal 
             title={
@@ -79,6 +93,22 @@ const EmployeeModal = ({ open, onCancel, onSave, editingUser, form }) => {
                         </Form.Item>
                     </Col>
                 </Row>
+
+                {selectedRole === 'CUSTOMER' && (
+                    <Row gutter={16}>
+                        <Col span={24}>
+                            <Form.Item name="enterpriseId" label={<Text strong>Thuộc Doanh nghiệp (B2B)</Text>} rules={[{ required: true, message: 'Vui lòng chọn Doanh nghiệp cho công nhân!' }]}>
+                                <Select placeholder="Chọn Doanh nghiệp..." style={{ width: '100%' }}>
+                                    {enterprises.map(ent => (
+                                        <Select.Option key={ent.id} value={ent.id}>
+                                            {ent.companyName} (MST: {ent.taxCode})
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                )}
             </Form>
         </Modal>
     );

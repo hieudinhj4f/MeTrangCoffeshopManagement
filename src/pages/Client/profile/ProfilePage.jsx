@@ -60,8 +60,6 @@ const ProfilePage = () => {
   }
 
   const { customer, wallet } = profileData || {};
-  const totalSpent = Number(customer?.totalSpent ?? 0);
-  const rankProgress = Math.min((totalSpent / NEXT_RANK_MILESTONE) * 100, 100);
   const rankName = customer?.rankName || wallet?.rank || 'Chưa có hạng';
 
   return (

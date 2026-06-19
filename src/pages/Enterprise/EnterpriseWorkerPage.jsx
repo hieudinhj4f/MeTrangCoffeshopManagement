@@ -70,8 +70,7 @@ const EnterpriseWorkerPage = () => {
                   <th className="px-4 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200 rounded-tl-xl">Họ tên</th>
                   <th className="px-4 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200">Số điện thoại</th>
                   <th className="px-4 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200">Email</th>
-                  <th className="px-4 py-3 text-xs font-bold tracking-wider text-right text-slate-500 uppercase border-b border-slate-200">Số dư ví</th>
-                  <th className="px-4 py-3 text-xs font-bold tracking-wider text-right text-slate-500 uppercase border-b border-slate-200 rounded-tr-xl">Tổng chi tiêu</th>
+                  <th className="px-4 py-3 text-xs font-bold tracking-wider text-right text-slate-500 uppercase border-b border-slate-200 rounded-tr-xl">Số dư ví</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -98,9 +97,6 @@ const EnterpriseWorkerPage = () => {
                     </td>
                     <td className="px-4 py-4 text-sm text-right font-bold text-orange-600">
                       {worker.wallet?.balance ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(worker.wallet.balance) : '0 ₫'}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-right font-bold text-slate-700">
-                      {worker.totalSpent ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(worker.totalSpent) : '0 ₫'}
                     </td>
                   </tr>
                 ))}

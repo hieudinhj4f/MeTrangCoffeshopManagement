@@ -129,7 +129,6 @@ export default function B2BManager() {
                 <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">Người Đại Diện</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-center px-2">Chiết Khấu</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-left px-2">Hạn mức Nợ</th>
-                <th className="pb-4 font-black uppercase text-slate-400 text-right px-2">Đã Chi Tiêu</th>
                 <th className="pb-4 font-black uppercase text-slate-400 text-right px-2 w-16">Thao Tác</th>
             </tr>
           </thead>
@@ -172,9 +171,6 @@ export default function B2BManager() {
                   </td>
                   <td className="py-4 px-4 font-semibold text-red-500">
                     {(partner.creditLimit || 0).toLocaleString()} đ
-                  </td>
-                  <td className="py-4 px-2 text-right font-black text-orange-500 text-xs">
-                    {partner.totalSpent ? partner.totalSpent.toLocaleString('vi-VN') : 0} đ
                   </td>
                   <td className="py-4 px-2 text-right">
                     <button 
