@@ -17,8 +17,7 @@ const EmployeeManagement = () => {
         setLoading(true);
         try {
             const response = await axios.get('https://metrangcompanybe.onrender.com/api/users', { withCredentials: true });
-            const staffOnly = response.data.filter(u => u.role !== 'CUSTOMER');
-            setUsers(staffOnly);
+            setUsers(response.data);
         } catch (error) {
             message.error("Không thể tải danh sách tài khoản!");
         } finally {
