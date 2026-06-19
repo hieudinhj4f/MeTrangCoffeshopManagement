@@ -222,7 +222,7 @@ const ProductManagementPage = () => {
                             style={{ width: '100%', height: '45px' }}
                         >
                             {categories.map(cat => (
-                                <Option key={cat.id} value={cat.id}>{cat.name}</Option>
+                                <Option key={cat.id} value={cat.id}>{cat.categoryName}</Option>
                             ))}
                         </Select>
                     </Col>
@@ -277,7 +277,7 @@ const ProductManagementPage = () => {
                         <Col span={8}>
                             <Form.Item name="categoryId" label="Danh mục" rules={[{ required: true }]}>
                                 <Select>
-                                    {categories.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                                    {categories.map(cat => <Option key={cat.id} value={cat.id}>{cat.categoryName}</Option>)}
                                 </Select>
                             </Form.Item>
                         </Col>

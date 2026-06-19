@@ -11,6 +11,7 @@ const EmployeeManagement = () => {
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
+    const [searchText, setSearchText] = useState('');
     const [form] = Form.useForm();
 
     const fetchEmployees = async () => {
@@ -128,6 +129,13 @@ const EmployeeManagement = () => {
         },
     ];
 
+    const filteredUsers = users.filter(u => {
+        const matchName = (u.fullName || "").toLowerCase().includes(searchText.toLowerCase());
+        const matchUsername = (u.username || "").toLowerCase().includes(searchText.toLowerCase());
+        const matchPhone = (u.phone || "").includes(searchText);
+        return matchName || matchUsername || matchPhone;
+    });
+
     return (
         <div style={{ padding: '40px', background: '#f8f7f4', minHeight: '100vh' }}>
             <div style={{ background: '#0a1628', padding: '40px', borderRadius: '24px', marginBottom: '40px', position: 'relative', overflow: 'hidden' }}>
@@ -145,10 +153,16 @@ const EmployeeManagement = () => {
 
             <Card borderless style={{ borderRadius: '24px', boxShadow: '0 2px 20px rgba(10,22,40,0.05)' }}>
                 <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between' }}>
-                    <Input prefix={<Search size={18} color="#9b9690" />} placeholder="Tìm tài khoản..." style={{ width: 400, borderRadius: '12px', background: '#f2f1ee', border: 'none', height: '45px' }} />
+                    <Input 
+                        prefix={<Search size={18} color="#9b9690" />} 
+                        placeholder="Tìm tài khoản..." 
+                        value={searchText}
+                        onChange={e => setSearchText(e.target.value)}
+                        style={{ width: 400, borderRadius: '12px', background: '#f2f1ee', border: 'none', height: '45px' }} 
+                    />
                     <Button type="primary" icon={<Plus size={18} />} style={{ background: '#0a1628', border: 'none', borderRadius: '12px', height: '45px', padding: '0 24px' }} onClick={() => { setEditingUser(null); form.resetFields(); setIsModalOpen(true); }}>THÊM TÀI KHOẢN MỚI</Button>
                 </div>
-                <Table columns={columns} dataSource={users} rowKey="id" loading={loading} pagination={{ pageSize: 8 }} />
+                <Table columns={columns} dataSource={filteredUsers} rowKey="id" loading={loading} pagination={{ pageSize: 8 }} />
             </Card>
 
             <EmployeeModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} onSave={handleSubmit} editingUser={editingUser} form={form} />
