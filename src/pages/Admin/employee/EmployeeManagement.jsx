@@ -77,7 +77,7 @@ const EmployeeManagement = () => {
             render: (_, record) => (
                 <div style={{ fontSize: '13px' }}>
                     <div className="flex items-center gap-2"><Mail size={12}/> {record.email || 'N/A'}</div>
-                    <div className="flex items-center gap-2"><Phone size={12}/> {record.phoneNumber || 'N/A'}</div>
+                    <div className="flex items-center gap-2"><Phone size={12}/> {record.phone || 'N/A'}</div>
                 </div>
             ),
         },
