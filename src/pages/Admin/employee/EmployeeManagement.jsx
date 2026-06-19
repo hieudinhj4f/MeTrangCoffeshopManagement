@@ -142,23 +142,7 @@ const EmployeeManagement = () => {
                 <Users size={200} color="#e8631a" style={{ position: 'absolute', right: '-40px', bottom: '-60px', opacity: 0.1 }} />
             </div>
 
-            <Row gutter={[24, 24]} style={{ marginBottom: '40px' }}>
-                <Col span={8}>
-                    <Card borderless style={{ borderRadius: '16px' }}>
-                        <Statistic title="TỔNG TÀI KHOẢN" value={users.length} prefix={<Users size={20} color="#e8631a" />} />
-                    </Card>
-                </Col>
-                <Col span={8}>
-                    <Card borderless style={{ borderRadius: '16px' }}>
-                        <Statistic title="ĐANG TRỰC" value={users.filter(u => u.isActive).length} valueStyle={{ color: '#52c41a' }} />
-                    </Card>
-                </Col>
-                <Col span={8}>
-                    <Card borderless style={{ borderRadius: '16px' }}>
-                        <Statistic title="QUẢN TRỊ VIÊN" value={users.filter(u => u.role === 'ADMIN').length} prefix={<ShieldCheck size={20} color="#0a1628" />} />
-                    </Card>
-                </Col>
-            </Row>
+
 
             <Card borderless style={{ borderRadius: '24px', boxShadow: '0 2px 20px rgba(10,22,40,0.05)' }}>
                 <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between' }}>

@@ -21,10 +21,10 @@ const DashboardPage = () => {
     { id: 'wallet_topup', label: 'Quản lý quỹ nội bộ', icon: 'fa-wallet', group: 'Hệ thống' },
 
     { id: 'inventory', label: 'Quản lý Nhập/Xuất', icon: 'fa-boxes-stacked', group: 'Kho hàng' },
-    { id: 'export', label: 'Quản lý sản phẩm', icon: 'fa-icon-product', group: 'Kho hàng' },
+    { id: 'export', label: 'Quản lý sản phẩm', icon: 'fa-box-open', group: 'Kho hàng' },
 
     { id: 'suppliers', label: 'Nhà cung cấp', icon: 'fa-handshake', group: 'Đối tác' },
-    { id: 'entry', label: 'Quản lý đối tác ', icon: 'fa-user-profile', group: 'Đối tác' },
+    { id: 'entry', label: 'Quản lý đối tác ', icon: 'fa-building', group: 'Đối tác' },
 
 
     // Các module khác có thể thêm vào đây...
