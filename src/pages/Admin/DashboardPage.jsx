@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import WarehousePage from './warehouse/WarehousePage.jsx';
-import B2BManager from './inventory/B2BManager.jsx';
 import AccountManagement from './account/AccountManagementPage.jsx';
 import SupplierPage from './supplier/SupplierPage.jsx';
 import EmployeeManagement from './employee/EmployeeManagement.jsx';
@@ -24,7 +23,6 @@ const DashboardPage = () => {
     { id: 'export', label: 'Quản lý sản phẩm', icon: 'fa-box-open', group: 'Kho hàng' },
 
     { id: 'suppliers', label: 'Nhà cung cấp', icon: 'fa-handshake', group: 'Đối tác' },
-    { id: 'entry', label: 'Quản lý đối tác ', icon: 'fa-building', group: 'Đối tác' },
 
 
     // Các module khác có thể thêm vào đây...
@@ -63,9 +61,6 @@ const DashboardPage = () => {
 
       case 'inventory':
         return <WarehousePage />;
-
-      case 'entry':
-        return <B2BManager />;
 
       case 'suppliers':
         return <SupplierPage />;

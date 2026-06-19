@@ -26,15 +26,7 @@ const AccountManagement = () => {
         fetchUsers();
     }, []);
 
-    const handleDeactivate = async (id) => {
-        try {
-            await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
-            message.success("Đã vô hiệu hóa tài khoản!");
-            fetchUsers();
-        } catch (error) {
-            message.error("Lỗi khi thực hiện!");
-        }
-    };
+
 
     const columns = [
         {
@@ -81,14 +73,6 @@ const AccountManagement = () => {
                     <Button type="link" onClick={() => message.info(`Sửa ID: ${record.id}`)}>
                         Sửa
                     </Button>
-                    {record.isActive && (
-                        <Popconfirm
-                            title="Khóa tài khoản này?"
-                            onConfirm={() => handleDeactivate(record.id)}
-                        >
-                            <Button type="link" danger>Khóa</Button>
-                        </Popconfirm>
-                    )}
                 </Space>
             ),
         },
