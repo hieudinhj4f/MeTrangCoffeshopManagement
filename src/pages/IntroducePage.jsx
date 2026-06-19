@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-const NAV_LINKS = ["Trang chủ", "Cửa hàng", "Bài viết", "Thông tin"];
+const NAV_LINKS = ["Trang chủ", "Cửa hàng"];
 
 
 
@@ -215,20 +215,7 @@ export default function IntroducePage() {
         .feature-icon { font-size: 24px; margin-bottom: 4px; }
         .feature-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
 
-        .liên-hệ-btn {
-          background: #f5a623;
-          color: #fff;
-          border: none;
-          padding: 10px 22px;
-          border-radius: 50px;
-          font-size: 15px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: background 0.2s, transform 0.15s;
-          font-family: 'Nunito', sans-serif;
-          white-space: nowrap;
-        }
-        .liên-hệ-btn:hover { background: #e8891a; transform: translateY(-1px); }
+
 
         .navbar {
           position: sticky;
@@ -268,7 +255,6 @@ export default function IntroducePage() {
           {NAV_LINKS.map((link) => (
             <a key={link} href="#" className="nav-link">{link}</a>
           ))}
-          <button className="liên-hệ-btn">Liên hệ</button>
         </div>
         {/* Mobile hamburger */}
         <button
