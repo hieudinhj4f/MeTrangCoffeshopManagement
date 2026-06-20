@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Col, Input, Select, Typography } from 'antd';
-import api from '../../../services/api';
+import api from '../../services/api';
 
 const { Text } = Typography;
 
