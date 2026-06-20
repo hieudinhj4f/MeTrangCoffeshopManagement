@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import homePageImg from "../assets/HomePage.png";
-const NAV_LINKS = ["Trang chủ", "Cửa hàng"];
 
 
 
@@ -156,27 +155,19 @@ export default function IntroducePage() {
         }
 
         .coffee-img-wrap {
-          position: relative;
+          position: absolute;
+          top: 0; left: 0; width: 100%; height: 100%;
           opacity: 0;
-          transform: scale(0.85) translateX(30px);
-          transition: opacity 0.9s ease 0.3s, transform 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.3s;
+          transition: opacity 0.9s ease 0.3s;
         }
         .coffee-img-wrap.visible {
           opacity: 1;
-          transform: scale(1) translateX(0);
         }
 
         .coffee-img {
-          width: clamp(260px, 38vw, 480px);
-          height: clamp(260px, 38vw, 480px);
-          object-fit: contain;
-          filter: drop-shadow(0 20px 60px rgba(0,0,0,0.18));
-          animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-12px); }
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .badge {
@@ -252,11 +243,7 @@ export default function IntroducePage() {
       {/* Navbar */}
       <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
         <span className="logo">Mê Trang</span>
-        <div className="nav-links-desktop" style={{ display: "flex", gap: 36, alignItems: "center" }}>
-          {NAV_LINKS.map((link) => (
-            <a key={link} href="#" className="nav-link">{link}</a>
-          ))}
-        </div>
+
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
