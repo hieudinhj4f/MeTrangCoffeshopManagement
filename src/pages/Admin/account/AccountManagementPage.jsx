@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag, Button, Space, message, Popconfirm } from 'antd';
 import axios from 'axios';
+import UserEditModal from './UserEditModal';
 
-const AccountManagement = () => {
+const AccountManagement = ({ mode = 'ADMIN' }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState(null);
 
     // 1. Hàm gọi API lấy danh sách user  
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com', {
+            const endpoint = mode === 'ENTERPRISE' 
+                ? 'https://metrangcompanybe.onrender.com/api/users/enterprise/workers'
+                : 'https://metrangcompanybe.onrender.com/api/users';
+                
+            const response = await axios.get(endpoint, {
                 withCredentials: true
             });
             setUsers(response.data);
@@ -24,9 +33,12 @@ const AccountManagement = () => {
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [mode]);
 
-
+    const handleEdit = (user) => {
+        setEditingUser(user);
+        setIsModalOpen(true);
+    };
 
     const columns = [
         {
@@ -39,6 +51,7 @@ const AccountManagement = () => {
             title: 'Họ và Tên',
             dataIndex: 'fullName',
             key: 'fullName',
+            render: (text) => text || <span style={{ color: '#ccc', fontStyle: 'italic' }}>Chưa cập nhật</span>
         },
         {
             title: 'Vai trò',
@@ -70,8 +83,8 @@ const AccountManagement = () => {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => message.info(`Sửa ID: ${record.id}`)}>
-                        Sửa
+                    <Button type="primary" size="small" onClick={() => handleEdit(record)} style={{ background: '#f97316', borderColor: '#f97316' }}>
+                        <i className="fas fa-edit mr-1"></i> Sửa
                     </Button>
                 </Space>
             ),
@@ -80,12 +93,20 @@ const AccountManagement = () => {
 
     return (
         <div style={{ padding: '24px' }}>
-            <h2>Quản lý tài khoản</h2>
+            <h2>{mode === 'ENTERPRISE' ? 'Quản lý tài khoản công nhân' : 'Quản lý tài khoản'}</h2>
             <Table
                 columns={columns}
                 dataSource={users}
                 rowKey="id"
                 loading={loading}
+            />
+            
+            <UserEditModal 
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                user={editingUser}
+                mode={mode}
+                onSuccess={fetchUsers}
             />
         </div>
     );

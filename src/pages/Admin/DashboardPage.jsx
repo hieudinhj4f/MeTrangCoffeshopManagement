@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import WarehousePage from './warehouse/WarehousePage.jsx';
 import AccountManagement from './account/AccountManagementPage.jsx';
 import SupplierPage from './supplier/SupplierPage.jsx';
@@ -13,6 +14,14 @@ import { Orbit } from 'lucide-react';
 
 const DashboardPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'dash');
 
@@ -131,6 +140,16 @@ const DashboardPage = () => {
             );
           })}
         </nav>
+
+        <div className="p-4 border-t border-white/5">
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center px-6 py-3 text-red-500 hover:bg-red-500/10 transition-all rounded-lg"
+            >
+              <i className="fas fa-sign-out-alt w-5 text-sm"></i>
+              {isSidebarOpen && <span className="ml-4 text-[10px] font-bold uppercase">Đăng xuất</span>}
+            </button>
+        </div>
       </aside>
 
       {/* 2. MAIN AREA */}
@@ -153,14 +172,14 @@ const DashboardPage = () => {
           <div className="flex items-center gap-4">
             {/* Profile: Căn giữa cực đẹp giữa 2 dòng */}
             <div className="flex flex-col justify-center text-right h-10 py-1">
-              <p className="text-[11px] font-extrabold text-white leading-none mb-1">Hiếu Admin</p>
+              <p className="text-[11px] font-extrabold text-white leading-none mb-1">{user?.fullName || 'Admin'}</p>
               <p className="text-[8px] text-orange-500 font-black uppercase tracking-tighter leading-none">
-                SUPERUSER ONLINE
+                {user?.role || 'SUPERUSER ONLINE'}
               </p>
             </div>
             <div className="relative cursor-pointer">
               <img
-                src="https://ui-avatars.com/api/?name=Hieu&background=f97316&color=fff&bold=true"
+                src={`https://ui-avatars.com/api/?name=${user?.fullName || 'A'}&background=f97316&color=fff&bold=true`}
                 className="w-9 h-9 rounded-xl border border-white/10 shadow-lg"
                 alt="avatar"
               />

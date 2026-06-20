@@ -1,27 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import UserEditModal from '../Admin/account/UserEditModal';
 
 const EnterpriseWorkerPage = () => {
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingWorker, setEditingWorker] = useState(null);
+
+  const fetchWorkers = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/customers/enterprise/workers');
+      setWorkers(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Lỗi khi tải danh sách công nhân:', err);
+      setError('Không thể tải danh sách công nhân. ' + (err.response?.data?.reason || ''));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchWorkers = async () => {
-      try {
-        const response = await api.get('/customers/enterprise/workers');
-        setWorkers(response.data);
-        setError(null);
-      } catch (err) {
-        console.error('Lỗi khi tải danh sách công nhân:', err);
-        setError('Không thể tải danh sách công nhân. ' + (err.response?.data?.reason || ''));
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchWorkers();
   }, []);
+
+  const handleEdit = (worker) => {
+    setEditingWorker(worker);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
@@ -64,7 +75,8 @@ const EnterpriseWorkerPage = () => {
                   <th className="px-4 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200 rounded-tl-xl">Họ tên</th>
                   <th className="px-4 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200">Số điện thoại</th>
                   <th className="px-4 py-3 text-xs font-bold tracking-wider text-slate-500 uppercase border-b border-slate-200">Email</th>
-                  <th className="px-4 py-3 text-xs font-bold tracking-wider text-right text-slate-500 uppercase border-b border-slate-200 rounded-tr-xl">Số dư ví</th>
+                  <th className="px-4 py-3 text-xs font-bold tracking-wider text-right text-slate-500 uppercase border-b border-slate-200">Số dư ví</th>
+                  <th className="px-4 py-3 text-xs font-bold tracking-wider text-center text-slate-500 uppercase border-b border-slate-200 rounded-tr-xl">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -92,6 +104,15 @@ const EnterpriseWorkerPage = () => {
                     <td className="px-4 py-4 text-sm text-right font-bold text-orange-600">
                       {worker.wallet?.balance ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(worker.wallet.balance) : '0 ₫'}
                     </td>
+                    <td className="px-4 py-4 text-center">
+                      <button 
+                        onClick={() => handleEdit(worker)}
+                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                        title="Chỉnh sửa tài khoản"
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -99,6 +120,14 @@ const EnterpriseWorkerPage = () => {
           </div>
         )}
       </div>
+
+      <UserEditModal 
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        user={editingWorker?.user}
+        mode="ENTERPRISE"
+        onSuccess={fetchWorkers}
+      />
     </div>
   );
 };

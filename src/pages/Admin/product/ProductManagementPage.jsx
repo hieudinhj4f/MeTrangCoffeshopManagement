@@ -85,8 +85,13 @@ const ProductManagementPage = () => {
     const handleSave = async (values) => {
         setLoading(true);
         try {
-            await axios.post('https://metrangcompanybe.onrender.com/api/products/quick-add', values, { withCredentials: true });
-            message.success("Cấu hình sản phẩm thành công!");
+            if (editingProduct) {
+                await axios.put(`https://metrangcompanybe.onrender.com/api/products/${editingProduct.id}`, values, { withCredentials: true });
+                message.success("Cập nhật sản phẩm thành công!");
+            } else {
+                await axios.post('https://metrangcompanybe.onrender.com/api/products/quick-add', values, { withCredentials: true });
+                message.success("Thêm mới sản phẩm thành công!");
+            }
             setIsModalOpen(false);
             fetchProducts();
         } catch (error) {
