@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import WarehousePage from './warehouse/WarehousePage.jsx';
 import AccountManagement from './account/AccountManagementPage.jsx';
 import SupplierPage from './supplier/SupplierPage.jsx';
@@ -11,8 +12,9 @@ import EnterpriseTopUp from '../Enterprise/EnterpriseTopUp.jsx';
 import { Orbit } from 'lucide-react';
 
 const DashboardPage = () => {
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState('dash');
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'dash');
 
   const modules = [
 

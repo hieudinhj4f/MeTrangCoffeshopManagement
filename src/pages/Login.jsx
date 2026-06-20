@@ -23,6 +23,8 @@ const Login = () => {
         navigate('/shop');
       } else if (response.data.role === 'ENTERPRISE') {
         navigate('/enterprise/dashboard');
+      } else if (response.data.role === 'STAFF') {
+        navigate('/dashboard', { state: { activeTab: 'POS' } });
       } else {
         navigate('/dashboard');
       }

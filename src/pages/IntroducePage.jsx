@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import homePageImg from "../assets/HomePage.png";
 const NAV_LINKS = ["Trang chủ", "Cửa hàng"];
 
 
@@ -8,7 +9,7 @@ export default function IntroducePage() {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);  
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setLoaded(true), 100);
@@ -298,8 +299,8 @@ export default function IntroducePage() {
             {/* Coffee cup SVG placeholder (replace src with real image) */}
             <img
               className="coffee-img"
-              src=""
-              alt="Latte art coffee cup"
+              src={homePageImg}
+              alt="Mê Trang Coffee"
             />
             <div className="badge badge-top">Arabica 100%</div>
             <div className="badge badge-bottom"> Được yêu thích nhất</div>
