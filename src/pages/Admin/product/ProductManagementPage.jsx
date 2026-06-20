@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Select, InputNumber, Avatar, Upload, Switch } from 'antd';
 import { Coffee, Plus, Search, Edit3, Trash2, Image as ImageIcon, Percent, Filter, UploadCloud, Loader2, Tag as TagIcon, Layers } from 'lucide-react';
-import axios from 'axios';
+import api from '../../../services/api';
 
 
 const { Title, Text } = Typography;
@@ -22,7 +22,7 @@ const ProductManagementPage = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com/api/products', { withCredentials: true });
+            const response = await api.get('/products');
             setProducts(response.data);
         } catch (error) {
             message.error("Lỗi kết nối dữ liệu!");
@@ -36,7 +36,7 @@ const ProductManagementPage = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com/api/categories', { withCredentials: true });
+            const response = await api.get('/categories');
             setCategories(response.data);
         } catch (error) {
             console.error(error);
@@ -62,16 +62,18 @@ const ProductManagementPage = () => {
 
         setUploading(true);
         try {
-            const response = await axios.post(
+            // keep axios for Cloudinary because it doesn't need our backend token
+            const response = await fetch(
                 'https://api.cloudinary.com/v1_1/dmbhwdjua/image/upload', 
-                formData
+                { method: 'POST', body: formData }
             );
+            const data = await response.json();
             
-            const secureUrl = response.data.secure_url;
+            const secureUrl = data.secure_url;
             setImageUrl(secureUrl); 
             form.setFieldsValue({ imageUrl: secureUrl }); 
             
-            onSuccess(response.data);
+            onSuccess(data);
             message.success('Tải ảnh lên mây Cloudinary thành công!');
         } catch (error) {
             console.error('Lỗi upload:', error);
@@ -86,10 +88,10 @@ const ProductManagementPage = () => {
         setLoading(true);
         try {
             if (editingProduct) {
-                await axios.put(`https://metrangcompanybe.onrender.com/api/products/${editingProduct.id}`, values, { withCredentials: true });
+                await api.put(`/products/${editingProduct.id}`, values);
                 message.success("Cập nhật sản phẩm thành công!");
             } else {
-                await axios.post('https://metrangcompanybe.onrender.com/api/products/quick-add', values, { withCredentials: true });
+                await api.post('/products/quick-add', values);
                 message.success("Thêm mới sản phẩm thành công!");
             }
             setIsModalOpen(false);
@@ -102,7 +104,7 @@ const ProductManagementPage = () => {
     const handleSaveCategory = async (values) => {
         setCatLoading(true);
         try {
-            await axios.post('https://metrangcompanybe.onrender.com/api/categories', { categoryName: values.name }, { withCredentials: true });
+            await api.post('/categories', { categoryName: values.name });
             message.success("Thêm danh mục thành công!");
             catForm.resetFields();
             fetchCategories();
@@ -115,7 +117,7 @@ const ProductManagementPage = () => {
 
     const handleDeleteCategory = async (id) => {
         try {
-            await axios.delete(`https://metrangcompanybe.onrender.com/api/categories/${id}`, { withCredentials: true });
+            await api.delete(`/categories/${id}`);
             message.success("Xóa danh mục thành công!");
             fetchCategories();
         } catch (error) {
@@ -125,7 +127,7 @@ const ProductManagementPage = () => {
 
     const handleDeleteProduct = async (id) => {
         try {
-            await axios.delete(`https://metrangcompanybe.onrender.com/api/products/${id}`, { withCredentials: true });
+            await api.delete(`/products/${id}`);
             message.success("Xóa sản phẩm thành công!");
             fetchProducts();
         } catch (error) {

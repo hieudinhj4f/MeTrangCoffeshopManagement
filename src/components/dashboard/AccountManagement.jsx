@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag, Button, Space, message, Popconfirm } from 'antd';
-import axios from 'axios';
+import api from '../../services/api';
 
 const AccountManagement = () => {
     const [users, setUsers] = useState([]);
@@ -10,9 +10,7 @@ const AccountManagement = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com/api/users', {
-                withCredentials: true // Quan trọng để khớp với cấu hình CORS mình vừa sửa
-            });
+            const response = await api.get('/users');
             setUsers(response.data);
         } catch (error) {
             message.error("Không thể tải danh sách tài khoản!");
@@ -29,7 +27,7 @@ const AccountManagement = () => {
     // 2. Hàm vô hiệu hóa tài khoản
     const handleDeactivate = async (id) => {
         try {
-            await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
+            await api.patch(`/users/${id}/deactivate`);
             message.success("Đã vô hiệu hóa tài khoản!");
             fetchUsers(); // Tải lại danh sách
         } catch (error) {

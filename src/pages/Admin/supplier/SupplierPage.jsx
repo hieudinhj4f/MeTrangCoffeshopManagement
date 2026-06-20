@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Statistic, Progress } from 'antd';
+import { Table, Button, Modal, Form, Input, message, Tag, Space, Card, Typography, Row, Col, Statistic } from 'antd';
 import { Truck, Plus, Search, PhoneCall, Wallet, PackageCheck, Edit3 } from 'lucide-react';
-import axios from 'axios';
+import api from '../../../services/api';
 
 const { Title, Text } = Typography;
 
@@ -15,9 +15,7 @@ const SupplierPage = () => {
     const fetchSuppliers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com/api/suppliers', {
-                withCredentials: true 
-            });
+            const response = await api.get('/suppliers');
             setSuppliers(Array.isArray(response.data) ? response.data : (response.data?.data || []));
         } catch (error) {
             message.error("Không thể tải dữ liệu nhà cung cấp!");
@@ -33,10 +31,10 @@ const SupplierPage = () => {
     const handleSubmit = async (values) => {
         try {
             if (editingSupplier) {
-                await axios.put(`https://metrangcompanybe.onrender.com/api/suppliers/${editingSupplier.id}`, values, { withCredentials: true });
+                await api.put(`/suppliers/${editingSupplier.id}`, values);
                 message.success("Cập nhật thành công!");
             } else {
-                await axios.post('https://metrangcompanybe.onrender.com/api/suppliers', values, { withCredentials: true });
+                await api.post('/suppliers', values);
                 message.success("Thêm nhà cung cấp thành công!");
             }
             setIsModalOpen(false);

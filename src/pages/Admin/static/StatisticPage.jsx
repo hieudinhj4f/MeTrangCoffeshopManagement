@@ -6,9 +6,7 @@ import {
 } from 'lucide-react';
 import Chart from 'react-apexcharts';
 import dayjs from 'dayjs';
-// 💡 LƯU Ý: Nếu dự án của bạn dùng axios có chứa Token, hãy import file api của bạn vào đây
-// import api from '../utils/api'; 
-
+import api from '../../../services/api';
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
@@ -40,30 +38,26 @@ const StatisticPage = () => {
             const endDate = dateRange[1].format('YYYY-MM-DD');
 
             try {
-                // ĐANG DÙNG FETCH MẶC ĐỊNH. (Nếu bạn dùng axios thì thay bằng api.get('/api/statistics/finance?...'))
                 const [financeRes, operationRes, inventoryRes] = await Promise.all([
-                    fetch(`https://metrangcompanybe.onrender.com/api/statistics/finance?startDate=${startDate}&endDate=${endDate}`),
-                    fetch(`https://metrangcompanybe.onrender.com/api/statistics/operations?startDate=${startDate}&endDate=${endDate}`),
-                    fetch(`https://metrangcompanybe.onrender.com/api/statistics/inventory`)
+                    api.get(`/statistics/finance?startDate=${startDate}&endDate=${endDate}`),
+                    api.get(`/statistics/operations?startDate=${startDate}&endDate=${endDate}`),
+                    api.get(`/statistics/inventory`)
                 ]);
 
-                if (financeRes.ok) {
-                    const financeData = await financeRes.json();
-                    setFinanceSummary(financeData.summaryMetrics);
-                    setRevenueChart(financeData.revenueChart);
-                    setPaymentMethods(financeData.paymentMethods);
+                if (financeRes.data) {
+                    setFinanceSummary(financeRes.data.summaryMetrics);
+                    setRevenueChart(financeRes.data.revenueChart);
+                    setPaymentMethods(financeRes.data.paymentMethods);
                 }
 
-                if (operationRes.ok) {
-                    const opData = await operationRes.json();
-                    setOperationMetrics(opData.operationMetrics);
-                    setPeakHoursChart(opData.peakHoursChart);
+                if (operationRes.data) {
+                    setOperationMetrics(operationRes.data.operationMetrics);
+                    setPeakHoursChart(operationRes.data.peakHoursChart);
                 }
 
-                if (inventoryRes.ok) {
-                    const invData = await inventoryRes.json();
-                    setInventoryAlerts(invData.lowStockAlerts);
-                    setIngredientEfficiency(invData.ingredientEfficiency);
+                if (inventoryRes.data) {
+                    setInventoryAlerts(inventoryRes.data.lowStockAlerts);
+                    setIngredientEfficiency(inventoryRes.data.ingredientEfficiency);
                 }
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu thống kê:", error);
