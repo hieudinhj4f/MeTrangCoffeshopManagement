@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, Select, message } from 'antd';
-import axios from 'axios';
+import api from '../../../services/api';
 
 const UserEditModal = ({ open, onClose, user, mode = 'ADMIN', onSuccess }) => {
     const [form] = Form.useForm();
@@ -24,9 +24,7 @@ const UserEditModal = ({ open, onClose, user, mode = 'ADMIN', onSuccess }) => {
                 values.role = 'CUSTOMER';
             }
 
-            await axios.put(`https://metrangcompanybe.onrender.com/api/users/${user.id}`, values, {
-                withCredentials: true
-            });
+            await api.put(`/users/${user.id}`, values);
             message.success('Cập nhật tài khoản thành công!');
             onSuccess();
             onClose();

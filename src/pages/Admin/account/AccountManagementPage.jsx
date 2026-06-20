@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag, Button, Space, message, Popconfirm } from 'antd';
-import axios from 'axios';
+import api from '../../../services/api';
 import UserEditModal from './UserEditModal';
 
 const AccountManagement = ({ mode = 'ADMIN' }) => {
@@ -16,12 +16,10 @@ const AccountManagement = ({ mode = 'ADMIN' }) => {
         setLoading(true);
         try {
             const endpoint = mode === 'ENTERPRISE' 
-                ? 'https://metrangcompanybe.onrender.com/api/users/enterprise/workers'
-                : 'https://metrangcompanybe.onrender.com/api/users';
+                ? '/users/enterprise/workers'
+                : '/users';
                 
-            const response = await axios.get(endpoint, {
-                withCredentials: true
-            });
+            const response = await api.get(endpoint);
             setUsers(response.data);
         } catch (error) {
             message.error("Không thể tải danh sách tài khoản!");

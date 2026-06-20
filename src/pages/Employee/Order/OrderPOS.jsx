@@ -18,8 +18,9 @@ export default function OrderPOS() {
     const fetchProducts = async () => {
       setLoadingMenu(true);
       try {
-        const res = await api.get('/products');
-        setMenuItems(res.data);
+        const res = await api.get('/products/active');
+        const posProducts = res.data.filter(product => !product.isIngredient);
+        setMenuItems(posProducts);
       } catch (error) {
         message.error('Không thể tải danh sách sản phẩm!');
       } finally {

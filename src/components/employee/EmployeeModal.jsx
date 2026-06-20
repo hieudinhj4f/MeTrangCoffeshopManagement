@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Col, Input, Select, Typography } from 'antd';
-import axios from 'axios';
+import api from '../../../services/api';
 
 const { Text } = Typography;
 
@@ -10,7 +10,7 @@ const EmployeeModal = ({ open, onCancel, onSave, editingUser, form }) => {
 
     useEffect(() => {
         if (open) {
-            axios.get('https://metrangcompanybe.onrender.com/api/customers/b2b', { withCredentials: true })
+            api.get('/customers/b2b')
                 .then(res => {
                     const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
                     setEnterprises(data);

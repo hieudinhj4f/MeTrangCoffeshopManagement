@@ -10,6 +10,7 @@ import OrderManagement from '../Employee/Order/OrderManagement.jsx';
 import StatisticsPage from '../Admin/static/StatisticPage.jsx';
 import OrderPOS from '../Employee/Order/OrderPOS.jsx';
 import EnterpriseTopUp from '../Enterprise/EnterpriseTopUp.jsx';
+import B2BManagementPage from './b2b/B2BManagementPage.jsx';
 import { Orbit } from 'lucide-react';
 
 const DashboardPage = () => {
@@ -34,6 +35,7 @@ const DashboardPage = () => {
     { id: 'export', label: 'Quản lý sản phẩm', icon: 'fa-box-open', group: 'Kho hàng' },
 
     { id: 'suppliers', label: 'Nhà cung cấp', icon: 'fa-handshake', group: 'Đối tác' },
+    { id: 'b2b', label: 'Quản lý Doanh nghiệp B2B', icon: 'fa-building', group: 'Đối tác' },
 
 
     // Các module khác có thể thêm vào đây...
@@ -75,6 +77,9 @@ const DashboardPage = () => {
 
       case 'suppliers':
         return <SupplierPage />;
+
+      case 'b2b':
+        return <B2BManagementPage />;
 
       case 'export':
         return <ProductManagementPage />;

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getWarehouseInventory } from '../../../services/warehouseService';
 
 const InventoryTab = ({ warehouseId }) => {
@@ -13,7 +13,11 @@ const InventoryTab = ({ warehouseId }) => {
     setError(null);
 
     getWarehouseInventory(warehouseId)
-      .then((res) => setItems(Array.isArray(res.data) ? res.data : []))
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : [];
+        const ingredientsOnly = list.filter(item => item.product?.isIngredient);
+        setItems(ingredientsOnly);
+      })
       .catch((err) => {
         console.error(err);
         setError('Không thể tải dữ liệu tồn kho. Vui lòng kiểm tra kết nối backend.');

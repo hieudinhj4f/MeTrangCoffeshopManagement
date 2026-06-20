@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag, Button, Space, message, Popconfirm, Card, Typography, Row, Col, Statistic, Avatar, Input, Form } from 'antd';
 import { UserCheck, UserX, Search, ShieldCheck, Users, Mail, Phone, Edit3, Key, Plus } from 'lucide-react';
-import axios from 'axios';
+import api from '../../../services/api';
 import EmployeeModal from '../../../components/employee/EmployeeModal';
 
 const { Title, Text } = Typography;
@@ -17,7 +17,7 @@ const EmployeeManagement = () => {
     const fetchEmployees = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://metrangcompanybe.onrender.com/api/users', { withCredentials: true });
+            const response = await api.get('/users');
             setUsers(response.data);
         } catch (error) {
             message.error("Không thể tải danh sách tài khoản!");
@@ -31,10 +31,10 @@ const EmployeeManagement = () => {
     const handleSubmit = async (values) => {
         try {
             if (editingUser) {
-                await axios.put(`https://metrangcompanybe.onrender.com/api/users/${editingUser.id}`, values, { withCredentials: true });
+                await api.put(`/users/${editingUser.id}`, values);
                 message.success("Cập nhật thông tin tài khoản thành công!");
             } else {
-                await axios.post('https://metrangcompanybe.onrender.com/api/users', values, { withCredentials: true });
+                await api.post('/users', values);
                 message.success("Thêm tài khoản thành công!");
             }
             setIsModalOpen(false);
@@ -47,7 +47,7 @@ const EmployeeManagement = () => {
 
     const handleDeactivate = async (id) => {
         try {
-            await axios.patch(`https://metrangcompanybe.onrender.com/api/users/${id}/deactivate`, {}, { withCredentials: true });
+            await api.patch(`/users/${id}/deactivate`, {});
             message.success("Đã khóa tài khoản!");
             fetchEmployees();
         } catch (error) {
