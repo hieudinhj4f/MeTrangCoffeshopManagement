@@ -170,45 +170,6 @@ export default function IntroducePage() {
           object-fit: cover;
         }
 
-        .badge {
-          position: absolute;
-          background: #fff;
-          border-radius: 16px;
-          padding: 10px 16px;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-          font-weight: 700;
-          font-size: 13px;
-          color: #1a1a1a;
-          white-space: nowrap;
-        }
-        .badge-top { top: 10%; right: 5%; animation: badgeFloat 3.5s ease-in-out infinite; }
-        .badge-bottom { bottom: 15%; left: 0%; animation: badgeFloat 3.5s ease-in-out 1.5s infinite; }
-        @keyframes badgeFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-        }
-
-        .features-bar {
-          background: #1a1a1a;
-          display: flex;
-          justify-content: center;
-          gap: 48px;
-          padding: 28px 40px;
-          flex-wrap: wrap;
-        }
-        .feature-item {
-          color: #fff;
-          text-align: center;
-          opacity: 0;
-          transform: translateY(15px);
-          transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .feature-item.visible { opacity: 1; transform: translateY(0); }
-        .feature-icon { font-size: 24px; margin-bottom: 4px; }
-        .feature-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
-
-
-
         .navbar {
           position: sticky;
           top: 0;
@@ -235,8 +196,6 @@ export default function IntroducePage() {
           .hero-left { padding: 60px 32px; }
           .hero-right { min-height: 300px; }
           .navbar { padding: 0 24px; }
-          .features-bar { gap: 24px; }
-          .nav-links-desktop { display: none; }
         }
       `}</style>
 
@@ -289,30 +248,10 @@ export default function IntroducePage() {
               src={homePageImg}
               alt="Mê Trang Coffee"
             />
-            <div className="badge badge-top">Arabica 100%</div>
-            <div className="badge badge-bottom"> Được yêu thích nhất</div>
           </div>
         </div>
       </section>
 
-      {/* Features bar */}
-      <div className="features-bar">
-        {[
-          { icon: "", label: "Nguyên liệu tự nhiên" },
-          { icon: "", label: "Giao hàng toàn quốc" },
-          { icon: "", label: "Rang xay tươi mỗi ngày" },
-          { icon: "", label: "Chất lượng đảm bảo" },
-        ].map((f, i) => (
-          <div
-            key={f.label}
-            className={`feature-item${loaded ? " visible" : ""}`}
-            style={{ transitionDelay: `${0.8 + i * 0.1}s` }}
-          >
-            <div className="feature-icon">{f.icon}</div>
-            <div className="feature-label">{f.label}</div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
