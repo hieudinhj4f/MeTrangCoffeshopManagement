@@ -223,12 +223,17 @@ const OrderManagementPage = () => {
   );
 
   const renderColumn = (status, title, icon, colorClass, bgColorClass) => {
-    const colOrders = orders
+    let colOrders = orders
       .filter((o) => o.status === status)
       .sort((a, b) => {
         if (b.isPriority !== a.isPriority) return b.isPriority ? 1 : -1;
         return b.time.valueOf() - a.time.valueOf();
       });
+
+    const totalCount = colOrders.length;
+    if (status === 'COMPLETED') {
+      colOrders = colOrders.slice(0, 5);
+    }
 
     return (
       <Col span={8}>
@@ -240,7 +245,7 @@ const OrderManagementPage = () => {
               {icon} {title}
             </Space>
             <Badge
-              count={colOrders.length}
+              count={totalCount}
               showZero
               color={
                 status === 'PENDING' ? '#f59e0b' : status === 'PROCESSING' ? '#3b82f6' : '#10b981'

@@ -24,7 +24,7 @@ const EnterpriseTopUp = () => {
             setStaffs(staffUsers);
 
             if (historyRes.data?.status === 'Thành công') {
-                const histData = historyRes.data.data;
+                const histData = historyRes.data.data.filter(t => t.type === 'DEPOSIT');
                 setHistory(histData);
                 const sum = histData.reduce((acc, curr) => acc + curr.amount, 0);
                 setTotalToppedUp(sum);

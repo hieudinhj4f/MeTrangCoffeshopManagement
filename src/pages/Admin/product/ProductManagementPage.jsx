@@ -123,6 +123,16 @@ const ProductManagementPage = () => {
         }
     };
 
+    const handleDeleteProduct = async (id) => {
+        try {
+            await axios.delete(`https://metrangcompanybe.onrender.com/api/products/${id}`, { withCredentials: true });
+            message.success("Xóa sản phẩm thành công!");
+            fetchProducts();
+        } catch (error) {
+            message.error(error.response?.data?.reason || "Không thể xóa sản phẩm này!");
+        }
+    };
+
     const columns = [
         {
             title: 'SẢN PHẨM',
@@ -180,7 +190,16 @@ const ProductManagementPage = () => {
                         setIsModalOpen(true); 
                     }} />
                     
-                    <Button type="text" danger icon={<Trash2 size={18} />} />
+                    <Button type="text" danger icon={<Trash2 size={18} />} onClick={() => {
+                        Modal.confirm({
+                            title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+                            content: 'Hành động này không thể hoàn tác.',
+                            okText: 'Xóa',
+                            okType: 'danger',
+                            cancelText: 'Hủy',
+                            onOk: () => handleDeleteProduct(r.id)
+                        });
+                    }} />
                 </Space>
             )
         }

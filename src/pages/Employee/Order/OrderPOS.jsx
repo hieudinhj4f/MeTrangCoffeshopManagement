@@ -7,7 +7,10 @@ export default function OrderPOS() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null); 
+  const [allProducts, setAllProducts] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [loadingMenu, setLoadingMenu] = useState(false);
 
   const [cart, setCart] = useState([]);
@@ -20,7 +23,20 @@ export default function OrderPOS() {
       try {
         const res = await api.get('/products/active');
         const posProducts = res.data.filter(product => !product.isIngredient);
+        setAllProducts(posProducts);
         setMenuItems(posProducts);
+        
+        // Extract unique categories
+        const uniqueCategories = [];
+        const categoryMap = new Set();
+        posProducts.forEach(p => {
+          if (p.categoryId && !categoryMap.has(p.categoryId)) {
+            categoryMap.add(p.categoryId);
+            uniqueCategories.push({ id: p.categoryId, name: p.categoryName || 'Khác' });
+          }
+        });
+        setCategories(uniqueCategories);
+        
       } catch (error) {
         message.error('Không thể tải danh sách sản phẩm!');
       } finally {
@@ -30,6 +46,13 @@ export default function OrderPOS() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (selectedCategory === 'ALL') {
+      setMenuItems(allProducts);
+    } else {
+      setMenuItems(allProducts.filter(p => p.categoryId === selectedCategory));
+    }
+  }, [selectedCategory, allProducts]);
 
   const getDisplayPrice = (item) => {
     const currentPrice = item.basePrice || 0;
@@ -131,6 +154,25 @@ export default function OrderPOS() {
             <Search size={16} className="text-slate-400" />
             <input type="text" placeholder="Tìm tên món, mã vạch..." className="w-full ml-3 outline-none text-sm font-bold text-slate-700" />
           </div>
+        </div>
+
+        {/* THÊM THANH DANH MỤC NGANG Ở ĐÂY */}
+        <div className="flex items-center gap-3 overflow-x-auto pb-4 mb-2 custom-scrollbar">
+          <button 
+            onClick={() => setSelectedCategory('ALL')}
+            className={`whitespace-nowrap px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm ${selectedCategory === 'ALL' ? 'bg-[#111827] text-orange-500' : 'bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}
+          >
+            Tất cả
+          </button>
+          {categories.map(cat => (
+            <button 
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`whitespace-nowrap px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm ${selectedCategory === cat.id ? 'bg-[#111827] text-orange-500' : 'bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2 pb-20">
