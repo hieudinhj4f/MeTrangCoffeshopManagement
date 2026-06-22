@@ -236,7 +236,7 @@ export default function OrderPOS() {
                     <span>Hạn mức: {(selectedCustomer.creditLimit || 0).toLocaleString()}đ</span>
                   </>
                 ) : (
-                  <span>Số dư ví: {(selectedCustomer.walletBalance || 0).toLocaleString()}đ</span>
+                  <span>Số dư ví: {(selectedCustomer.wallet?.balance || 0).toLocaleString()}đ</span>
                 )}
               </div>
             </div>
