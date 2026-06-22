@@ -53,9 +53,9 @@ const EnterpriseTopUp = () => {
                 return;
             }
 
-            const res = await topUpBulk(targetIds, values.amount);
+            const res = await topUpBulk(targetIds, values.amount, true); // true = isTopUpToCeiling
             if (res.data?.status === 'Thành công') {
-                message.success(`Nạp tiền thành công cho ${res.data.totalProcessed} công nhân!`);
+                message.success(`Nạp bù định mức thành công cho ${res.data.totalProcessed} công nhân!`);
                 form.resetFields();
                 fetchData(); // Refresh history
             }
@@ -105,7 +105,7 @@ const EnterpriseTopUp = () => {
                     <Wallet className="w-8 h-8 text-orange-500" />
                     Quản lý nạp tiền nội bộ
                 </Title>
-                <Text type="secondary">Doanh nghiệp điều phối quỹ cho công nhân</Text>
+                <Text type="secondary">Doanh nghiệp nạp bù định mức trần cho công nhân</Text>
             </div>
 
             <Row gutter={[24, 24]} className="mb-8">
@@ -136,7 +136,7 @@ const EnterpriseTopUp = () => {
                 <Col xs={24} md={12} lg={8}>
                     <Card className="shadow-sm rounded-2xl border-none">
                         <Statistic 
-                            title={<span className="text-slate-500 font-medium">Số lượng công nhân</span>}
+                            title={<span className="text-slate-500 font-medium">Số lượng công nhân đang có</span>}
                             value={staffs.length} 
                             valueStyle={{ color: '#1e293b', fontWeight: 'bold' }}
                             prefix={<Users className="text-green-500" />}
@@ -147,7 +147,10 @@ const EnterpriseTopUp = () => {
 
             <Row gutter={[24, 24]}>
                 <Col xs={24} lg={8}>
-                    <Card title="Thực hiện nạp tiền" className="shadow-sm rounded-2xl border-none h-full">
+                    <Card title="Thực hiện Nạp bù Định mức trần" className="shadow-sm rounded-2xl border-none h-full">
+                        <div className="bg-blue-50 text-blue-800 p-4 rounded-xl mb-6 text-sm">
+                            Hệ thống sẽ tính toán chênh lệch và <b>chỉ nạp bù</b> để ví của nhân viên đạt đúng <b>Định mức trần</b> này. Những nhân viên đã dư đủ tiền sẽ không bị nạp thêm.
+                        </div>
                         <Form form={form} layout="vertical" onFinish={onFinish}>
                             <Form.Item 
                                 name="target" 
@@ -161,7 +164,7 @@ const EnterpriseTopUp = () => {
                                     className="h-12"
                                 >
                                     <Select.Option value="ALL" className="font-bold text-orange-600 bg-orange-50">
-                                        🚀 Nạp cho TẤT CẢ công nhân
+                                        🚀 Nạp bù cho TẤT CẢ công nhân
                                     </Select.Option>
                                     {staffs.map(s => (
                                         <Select.Option key={s.id} value={s.id}>
@@ -173,8 +176,8 @@ const EnterpriseTopUp = () => {
 
                             <Form.Item 
                                 name="amount" 
-                                label={<span className="font-medium text-slate-700">Số tiền nạp (VNĐ)</span>} 
-                                rules={[{ required: true, message: 'Vui lòng nhập số tiền hợp lệ!' }]}
+                                label={<span className="font-medium text-slate-700">Định mức trần mỗi nhân viên (VNĐ)</span>} 
+                                rules={[{ required: true, message: 'Vui lòng nhập định mức trần!' }]}
                             >
                                 <InputNumber 
                                     className="w-full h-12" 
@@ -191,7 +194,7 @@ const EnterpriseTopUp = () => {
                                 className="w-full h-12 rounded-xl bg-orange-500 hover:bg-orange-600 font-bold text-lg mt-4"
                                 loading={loading}
                             >
-                                Xác nhận Nạp tiền
+                                Xác nhận Nạp bù
                             </Button>
                         </Form>
                     </Card>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, message, Input, Modal, Form, InputNumber } from 'antd';
 import { Building2, Edit3, Search } from 'lucide-react';
+import { adminTopUp } from '../../../services/walletService';
 import api from '../../../services/api';
 
 const B2BManagementPage = () => {
@@ -10,8 +11,10 @@ const B2BManagementPage = () => {
     
     // Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
     const [editingCustomer, setEditingCustomer] = useState(null);
     const [form] = Form.useForm();
+    const [topUpForm] = Form.useForm();
 
     const fetchB2BCustomers = async () => {
         setLoading(true);
@@ -48,6 +51,26 @@ const B2BManagementPage = () => {
             fetchB2BCustomers();
         } catch (error) {
             message.error(error.response?.data?.reason || 'Lỗi khi cập nhật!');
+        }
+    };
+
+    const handleOpenTopUp = (customer) => {
+        setEditingCustomer(customer);
+        const debt = customer.wallet?.balance && customer.wallet.balance < 0 ? Math.abs(customer.wallet.balance) : 0;
+        topUpForm.setFieldsValue({
+            amount: debt > 0 ? debt : null
+        });
+        setIsTopUpModalOpen(true);
+    };
+
+    const handleTopUp = async (values) => {
+        try {
+            await adminTopUp(editingCustomer.id, values.amount);
+            message.success('Tất toán/Nạp tiền thành công!');
+            setIsTopUpModalOpen(false);
+            fetchB2BCustomers();
+        } catch (error) {
+            message.error(error.response?.data?.reason || 'Lỗi khi nạp tiền!');
         }
     };
 
@@ -116,14 +139,23 @@ const B2BManagementPage = () => {
             key: 'action',
             align: 'center',
             render: (_, record) => (
-                <Button 
-                    type="primary" 
-                    icon={<Edit3 size={16} />} 
-                    style={{ background: '#0a1628' }}
-                    onClick={() => handleEdit(record)}
-                >
-                    Chỉnh sửa
-                </Button>
+                <Space>
+                    <Button 
+                        type="primary" 
+                        style={{ background: '#10b981', borderColor: '#10b981' }}
+                        onClick={() => handleOpenTopUp(record)}
+                    >
+                        Tất toán
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        icon={<Edit3 size={16} />} 
+                        style={{ background: '#0a1628' }}
+                        onClick={() => handleEdit(record)}
+                    >
+                        Chỉnh sửa
+                    </Button>
+                </Space>
             )
         }
     ];
@@ -194,6 +226,37 @@ const B2BManagementPage = () => {
                             />
                         </Form.Item>
                     </div>
+                </Form>
+            </Modal>
+
+            <Modal
+                title={`Tất toán công nợ / Nạp tiền cho ${editingCustomer?.companyName || 'Doanh nghiệp'}`}
+                open={isTopUpModalOpen}
+                onCancel={() => setIsTopUpModalOpen(false)}
+                onOk={() => topUpForm.submit()}
+                okText="Xác nhận Tất toán"
+                cancelText="Hủy"
+                okButtonProps={{ style: { background: '#10b981', border: 'none' } }}
+            >
+                <div style={{ marginBottom: '16px', background: '#f0fdf4', padding: '12px', borderRadius: '8px', color: '#166534' }}>
+                    <strong>Lưu ý:</strong> Hành động này sẽ cộng trực tiếp tiền vào số dư của doanh nghiệp để xóa nợ. Số dư hiện tại:{' '}
+                    <strong>{editingCustomer?.wallet?.balance ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(editingCustomer.wallet.balance) : '0 ₫'}</strong>
+                </div>
+                <Form form={topUpForm} layout="vertical" onFinish={handleTopUp}>
+                    <Form.Item 
+                        name="amount" 
+                        label="Số tiền tất toán/nạp (VNĐ)"
+                        rules={[{ required: true, message: 'Vui lòng nhập số tiền!' }]}
+                    >
+                        <InputNumber 
+                            style={{ width: '100%' }}
+                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                            min={1000}
+                            step={100000}
+                            size="large"
+                        />
+                    </Form.Item>
                 </Form>
             </Modal>
         </div>
