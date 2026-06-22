@@ -16,9 +16,6 @@ const loadCart = () => {
   }
 };
 
-
-const CATEGORIES = ['All', 'Espresso', 'Cold Brew', 'Pour Over', 'Signature', 'Specialty', 'Latte'];
-
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap');
@@ -335,6 +332,7 @@ export default function HomePage() {
   const { user, logout, getCustomerId } = useAuth();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState(['All']);
   const [cart, setCart] = useState(loadCart);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -365,9 +363,16 @@ export default function HomePage() {
 
   useEffect(() => {
     setLoading(true);
-    api.get('/products')
-      .then((res) => {
-        setProducts(res.data);
+    Promise.all([
+      api.get('/products'),
+      api.get('/categories')
+    ])
+      .then(([productsRes, categoriesRes]) => {
+        setProducts(productsRes.data);
+        if (categoriesRes.data && categoriesRes.data.length > 0) {
+          const catNames = categoriesRes.data.map(c => c.name);
+          setCategories(['All', ...catNames]);
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -561,46 +566,10 @@ export default function HomePage() {
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate('/profile');
-                  }}
-                >
-                  👤 Trang cá nhân
-                </div>
-                <div 
-                  style={{ 
-                    padding: '12px 18px', 
-                    color: '#ffffff', 
-                    fontWeight: '600', 
-                    fontSize: '14px', 
-                    textAlign: 'right',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#d97706'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                  onClick={(e) => {
-                    e.stopPropagation();
                     navigate('/profile'); // Sửa thành /profile vì chưa có trang /wallet riêng
                   }}
                 >
                   💳 Quản lý Ví
-                </div>
-                <div 
-                  style={{ 
-                    padding: '12px 18px', 
-                    color: '#ffffff', 
-                    fontWeight: '600', 
-                    fontSize: '14px', 
-                    textAlign: 'right',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#d97706'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate('/order');
-                  }}
-                >
-                  📦 Đơn hàng đã mua
                 </div>
               </div>
             )}
@@ -651,7 +620,7 @@ export default function HomePage() {
             <h2 className="section-title">Bộ sưu tập thượng hạng</h2>
           </div>
           <div className="filter-tabs">
-            {CATEGORIES.map(cat => (
+            {categories.map(cat => (
               <button
                 key={cat}
                 className={`filter-tab${activeCategory === cat ? ' active' : ''}`}
@@ -668,7 +637,6 @@ export default function HomePage() {
             <div className="product-card" key={item.id}>
               <div className="product-img-wrap">
                 <img className="product-img" src={item.imageUrl || 'https://via.placeholder.com/300'} alt={item.name} />
-                <div className="product-badge"><Star size={12} /> 4.9</div>
               </div>
               <div className="product-body">
                 <div className="product-cat">{item.categoryName || 'Special'}</div>
