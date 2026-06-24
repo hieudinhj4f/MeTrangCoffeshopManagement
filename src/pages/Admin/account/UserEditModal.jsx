@@ -68,8 +68,6 @@ const UserEditModal = ({ open, onClose, user, mode = 'ADMIN', onSuccess }) => {
                         <Select.Option value="CUSTOMER">Công nhân (WORKER/CUSTOMER)</Select.Option>
                         <Select.Option value="ADMIN">Quản trị viên (ADMIN)</Select.Option>
                         <Select.Option value="STAFF">Thu ngân (STAFF)</Select.Option>
-                        <Select.Option value="WAREHOUSE_KEEPER">Thủ kho (WAREHOUSE_KEEPER)</Select.Option>
-                        <Select.Option value="DISPATCHER">Điều phối viên (DISPATCHER)</Select.Option>
                         <Select.Option value="ENTERPRISE">Doanh nghiệp (ENTERPRISE)</Select.Option>
                     </Select>
                 </Form.Item>

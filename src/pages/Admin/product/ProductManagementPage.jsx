@@ -33,6 +33,7 @@ const ProductManagementPage = () => {
     const [isCatModalOpen, setIsCatModalOpen] = useState(false);
     const [catForm] = Form.useForm();
     const [catLoading, setCatLoading] = useState(false);
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
 
     const fetchCategories = async () => {
         try {
@@ -104,9 +105,15 @@ const ProductManagementPage = () => {
     const handleSaveCategory = async (values) => {
         setCatLoading(true);
         try {
-            await api.post('/categories', { categoryName: values.name });
-            message.success("Thêm danh mục thành công!");
+            if (editingCategoryId) {
+                await api.put(`/categories/${editingCategoryId}`, { categoryName: values.name });
+                message.success("Cập nhật danh mục thành công!");
+            } else {
+                await api.post('/categories', { categoryName: values.name });
+                message.success("Thêm danh mục thành công!");
+            }
             catForm.resetFields();
+            setEditingCategoryId(null);
             fetchCategories();
         } catch (error) {
             message.error(error.response?.data?.reason || "Lỗi khi lưu danh mục!");
@@ -326,12 +333,20 @@ const ProductManagementPage = () => {
             >
                 <Form form={catForm} layout="inline" onFinish={handleSaveCategory} style={{ marginBottom: 24, marginTop: 16 }}>
                     <Form.Item name="name" rules={[{ required: true, message: 'Nhập tên danh mục' }]} style={{ flex: 1 }}>
-                        <Input placeholder="Tên danh mục mới..." />
+                        <Input placeholder="Tên danh mục..." />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={catLoading} style={{ background: '#0a1628' }}>
-                            Thêm Danh Mục
-                        </Button>
+                        <Space>
+                            <Button type="primary" htmlType="submit" loading={catLoading} style={{ background: '#0a1628' }}>
+                                {editingCategoryId ? 'Cập Nhật' : 'Thêm Mới'}
+                            </Button>
+                            {editingCategoryId && (
+                                <Button onClick={() => {
+                                    setEditingCategoryId(null);
+                                    catForm.resetFields();
+                                }}>Hủy</Button>
+                            )}
+                        </Space>
                     </Form.Item>
                 </Form>
 
@@ -342,10 +357,16 @@ const ProductManagementPage = () => {
                         { 
                             title: 'Thao tác', 
                             key: 'action', 
-                            width: 100, 
+                            width: 120, 
                             align: 'center',
                             render: (_, record) => (
-                                <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => handleDeleteCategory(record.id)} />
+                                <Space>
+                                    <Button type="text" icon={<Edit3 size={16} color="#d4af37" />} onClick={() => {
+                                        setEditingCategoryId(record.id);
+                                        catForm.setFieldsValue({ name: record.categoryName });
+                                    }} />
+                                    <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => handleDeleteCategory(record.id)} />
+                                </Space>
                             ) 
                         }
                     ]} 
